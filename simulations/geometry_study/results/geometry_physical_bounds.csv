@@ -1,0 +1,6 @@
+geometry,geometry_class,max_pairwise_separation_m,max_pairwise_tdoa_us,observed_max_abs_true_tdoa_us,within_physical_bound
+linear,collinear,0.25,168.9189189,168.8682581,true
+square_planar,coplanar,0.25,168.9189189,168.8797496,true
+cross_planar,coplanar,0.25,168.9189189,168.8682581,true
+tetrahedral,volumetric,0.25,168.9189189,168.864677,true
+three_plus_one,volumetric,0.25,168.9189189,168.3599996,true

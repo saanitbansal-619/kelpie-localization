@@ -1,0 +1,63 @@
+{
+  "label": "SIMULATION",
+  "study": "hydrophone_count_study",
+  "description": "Four versus five versus six hydrophones. Synthetic waveforms only. Not a hardware measurement. Does not modify the geometry study.",
+  "source_count": 300,
+  "source_positions_csv": "simulations/geometry_study/results/source_positions.csv",
+  "source_positions_sha256": "bcd99db83e6a989a2311c0d9fa04eda63f0c6e9cc42a03895f3497f0fc4df094",
+  "sensor_counts": [
+    4,
+    5,
+    6
+  ],
+  "configurations": [
+    "n4_tetrahedral",
+    "n5_bipyramid",
+    "n6_octahedron"
+  ],
+  "snr_levels_db": [
+    40.0,
+    30.0,
+    20.0,
+    10.0,
+    5.0,
+    0.0
+  ],
+  "total_trials": 5400,
+  "random_seed_rule": "1_000_000 + source_id * 100 + round(snr_db * 10); noise is the leading rows of a 6-channel draw",
+  "sound_speed_mps": 1480.0,
+  "sample_rate_hz": 256000.0,
+  "sample_period_us": 3.90625,
+  "metres_per_sample": 0.00578125,
+  "noise_draw_channels": 6,
+  "dc_offsets": [
+    0.35,
+    -0.22,
+    0.18,
+    -0.4,
+    0.27,
+    -0.15
+  ],
+  "baselines_m": {
+    "n4_tetrahedral": 0.24999999999999997,
+    "n5_bipyramid": 0.25000000000000006,
+    "n6_octahedron": 0.25
+  },
+  "max_physical_tdoa_us": {
+    "n4_tetrahedral": 168.9189189189189,
+    "n5_bipyramid": 168.91891891891896,
+    "n6_octahedron": 168.91891891891893
+  },
+  "reference_tdoa_counts": {
+    "4": 3,
+    "5": 4,
+    "6": 5
+  },
+  "unordered_pair_counts": {
+    "4": 6,
+    "5": 10,
+    "6": 15
+  },
+  "elapsed_s": 327.9,
+  "hardware_validation": false
+}

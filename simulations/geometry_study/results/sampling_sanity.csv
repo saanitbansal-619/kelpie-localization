@@ -1,0 +1,2 @@
+fs_hz,sample_period_s,sample_period_us,metres_per_sample,millimetres_per_sample,reference_baseline_m,reference_max_tdoa_s,reference_max_tdoa_us
+256000,3.90625e-06,3.90625,0.00578125,5.78125,0.25,0.0001689189189,168.9189189

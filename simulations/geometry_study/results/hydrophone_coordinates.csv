@@ -1,0 +1,21 @@
+geometry,geometry_name,channel,x_m,y_m,z_m
+linear,Linear,H0,-0.125,0,0
+linear,Linear,H1,-0.04166666667,0,0
+linear,Linear,H2,0.04166666667,0,0
+linear,Linear,H3,0.125,0,0
+square_planar,Square planar,H0,0.08838834765,0.08838834765,0
+square_planar,Square planar,H1,-0.08838834765,0.08838834765,0
+square_planar,Square planar,H2,-0.08838834765,-0.08838834765,0
+square_planar,Square planar,H3,0.08838834765,-0.08838834765,0
+cross_planar,Cross planar,H0,0.125,0,0
+cross_planar,Cross planar,H1,0,0.075,0
+cross_planar,Cross planar,H2,-0.125,0,0
+cross_planar,Cross planar,H3,0,-0.075,0
+tetrahedral,Tetrahedral,H0,0.08838834765,0.08838834765,0.08838834765
+tetrahedral,Tetrahedral,H1,0.08838834765,-0.08838834765,-0.08838834765
+tetrahedral,Tetrahedral,H2,-0.08838834765,0.08838834765,-0.08838834765
+tetrahedral,Tetrahedral,H3,-0.08838834765,-0.08838834765,0.08838834765
+three_plus_one,Three plus one,H0,0.1443375673,0,-0.0375
+three_plus_one,Three plus one,H1,-0.07216878365,0.125,-0.0375
+three_plus_one,Three plus one,H2,-0.07216878365,-0.125,-0.0375
+three_plus_one,Three plus one,H3,0,0,0.1125

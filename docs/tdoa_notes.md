@@ -1,9 +1,12 @@
 # TDOA notes
 
-These notes explain the Phase 2 estimator. The goal is not yet 3D
-localization. The goal is to recover known inter-hydrophone arrival-time
-differences from a preprocessed multichannel event, and to measure how that
-estimate degrades as noise increases.
+These notes explain the GCC-PHAT estimator. A later geometry study
+(`simulations/geometry_study/`) uses this same estimator on delays that come
+from hydrophone and source coordinates, then attempts localization. Linear
+and planar arrays are reported there as geometrically non-unique. The notes
+below still describe the estimator itself: recover inter-hydrophone arrival
+times from one preprocessed multichannel event, and see how that estimate
+moves as noise increases.
 
 Current chain:
 
@@ -22,9 +25,7 @@ one common multi-channel window
         ↓
 GCC-PHAT  →  TDOA relative to CH0
         ↓
-(later) direction estimation
-        ↓
-(later) 3D localization
+direction and 3D localization when geometry allows
 ```
 
 ## What is TDOA?
@@ -64,9 +65,10 @@ For hydrophones `i` and `j`,
 | `c` | speed of sound in the water |
 | `Δt_ij` | arrival time at i minus arrival time at j |
 
-If `j` is the reference hydrophone, `Δt_ij` is exactly `TDOA_i` above. Phase 2
-estimates the left-hand side from waveforms. It does not invert the
-right-hand side for `p`.
+If `j` is the reference hydrophone, `Δt_ij` is exactly `TDOA_i` above. GCC-PHAT
+estimates the left-hand side from waveforms. Inverting the right-hand side
+for `p` is a separate step in `src/localization.py`, and it is reported as
+unsuccessful when the hydrophones are collinear or coplanar.
 
 ## Why GCC-PHAT?
 

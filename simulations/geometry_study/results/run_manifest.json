@@ -1,0 +1,25 @@
+{
+  "label": "SIMULATION",
+  "n_sources": 300,
+  "n_geometries": 5,
+  "snr_levels_db": [
+    40.0,
+    30.0,
+    20.0,
+    10.0,
+    5.0,
+    0.0
+  ],
+  "n_rows": 9000,
+  "source_seed": 20260926,
+  "primary_comparison_snr_db": 20.0,
+  "representative_source_m": [
+    2.0,
+    1.0,
+    1.5
+  ],
+  "representative_snr_db": 30.0,
+  "elapsed_s": 393.3,
+  "monte_carlo_note": "elapsed_s is the full study script, including figures, from the Monte Carlo run",
+  "plots_only": false
+}

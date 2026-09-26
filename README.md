@@ -16,8 +16,13 @@ educational signal-processing foundation.
 
 ## Current phase
 
-Hardware is not available yet. This milestone builds and validates **synthetic
-TDOA estimation** on top of the existing preprocessing pipeline.
+**Hydrophone geometry study, plus a separate hydrophone-count study**
+
+Hardware is not available. The geometry study is a completed simulation of
+five four-hydrophone array shapes. Its results are preserved. A later
+simulation, in `simulations/hydrophone_count_study/`, compares 4, 5, and 6
+hydrophones inside the same physical envelope. Neither study is a hardware
+measurement.
 
 What works today:
 
@@ -27,13 +32,16 @@ What works today:
 4. Detect one shared acoustic event
 5. Extract one common multi-channel window
 6. Estimate TDOAs with GCC-PHAT and compare them to synthetic ground truth
+7. Place those delays from source and hydrophone geometry (`d_i / c`)
+8. Compare five array geometries under shared sources, SNR levels, and algorithms
+9. Estimate direction and 3D position when the array is not geometrically degenerate
 
 What is intentionally missing:
 
-* Direction estimation
-* 3D localization
 * ROS / Jetson / embedded hardware control
 * Hardware validation
+* A multipath model
+* A claim that any one geometry is the one to build
 
 Status:
 
@@ -41,8 +49,9 @@ Status:
 | --- | --- |
 | Preprocessing | IMPLEMENTED |
 | Synthetic TDOA | IMPLEMENTED after validation |
-| Direction estimation | NOT IMPLEMENTED |
-| 3D localization | NOT IMPLEMENTED |
+| Array geometries | IMPLEMENTED (simulation) |
+| Direction and 3D localization | IMPLEMENTED for volumetric arrays; linear and planar arrays are reported as non-unique |
+| Hardware validation | NOT DONE |
 
 ## Architecture overview
 
@@ -55,8 +64,7 @@ Synthetic 4-channel acoustic signal
         → common multi-channel window extraction
         → GCC-PHAT
         → TDOA (relative to CH0)
-        → later: direction estimation
-        → later: 3D localization
+        → direction and 3D localization when the array geometry supports it
 ```
 
 Engineering rule: preprocessing must never destroy the relative arrival-time
@@ -87,7 +95,11 @@ robosub-hydrophone-localization/
 │   ├── simulation.py      # synthetic chirp + 4-channel delays
 │   ├── preprocessing.py   # DC removal, bandpass, normalization
 │   ├── detection.py       # shared event index + common window
-│   └── tdoa.py            # GCC-PHAT and multichannel TDOA
+│   ├── tdoa.py            # GCC-PHAT and multichannel TDOA
+│   ├── geometry.py        # five arrays and path-length TDOAs
+│   └── localization.py    # TDOA least squares, degeneracy, direction
+├── simulations/
+│   └── geometry_study/    # geometry experiment, figures, and write-up
 ├── scripts/
 │   ├── generate_synthetic_data.py
 │   ├── test_preprocessing.py
@@ -96,7 +108,10 @@ robosub-hydrophone-localization/
 ├── tests/
 │   ├── __init__.py
 │   ├── test_preprocessing.py
-│   └── test_tdoa.py
+│   ├── test_tdoa.py
+│   ├── test_geometry.py
+│   ├── test_localization.py
+│   └── test_geometry_study.py
 ├── data/
 │   ├── raw/               # generated .npz captures
 │   └── processed/         # SNR experiment CSV
@@ -160,6 +175,13 @@ Run the SNR experiment (CSV under `data/processed/`, plot under `plots/`):
 python scripts/run_tdoa_snr_experiment.py
 ```
 
+Run the geometry simulation study (writes `simulations/geometry_study/results/`
+and `simulations/geometry_study/figures/`):
+
+```bash
+python simulations/geometry_study/run_geometry_study.py
+```
+
 Run unit tests:
 
 ```bash
@@ -168,12 +190,19 @@ python -m pytest -v
 
 ## Current milestone
 
-**Synthetic TDOA estimation**
+**Hydrophone geometry simulation study**
 
 The repository can create a known-delay 4-channel chirp, clean it, find one
 event, cut one shared window, and recover the inter-channel delays with
-GCC-PHAT. Estimated TDOAs are compared with synthetic ground truth, including
-an SNR sweep that reports how absolute error grows as noise increases.
+GCC-PHAT. A separate study compares five array geometries. Delays in that
+study come from path length. Localization is attempted only when the array
+can support a unique 3D solution; linear and planar arrays are reported as
+failures rather than given a forced position.
+
+The write-up for a faculty reader is
+[simulations/geometry_study/PROFESSOR_SUMMARY.md](simulations/geometry_study/PROFESSOR_SUMMARY.md).
+How to reproduce the study is
+[simulations/geometry_study/README.md](simulations/geometry_study/README.md).
 
 See [docs/preprocessing_notes.md](docs/preprocessing_notes.md) for why DC
 removal, zero-phase bandpass, and a common window are required.
@@ -183,9 +212,10 @@ GCC-PHAT, sampling limits, interpolation, and physical delay bounds.
 
 ## Future roadmap
 
-1. Hydrophone array geometry + direction estimation from the TDOA vector
-2. Geometric solver for 3D position from a known hydrophone array
-3. Replace the simulator with recorded 4-channel captures
-4. Only then: hardware acquisition, Jetson/ROS integration, and realtime constraints
+1. Review the geometry simulation with the professor and choose buildable candidates
+2. Add hydrophone-coordinate error and sound-speed error in simulation
+3. If a planar array remains of interest, test an explicitly labeled half-space assumption as a separate case
+4. Replace the simulator with recorded 4-channel captures when hardware exists
+5. Only then: hardware acquisition, Jetson/ROS integration, and realtime constraints
 
 Every meaningful code change is recorded in [CHANGELOG.md](CHANGELOG.md).

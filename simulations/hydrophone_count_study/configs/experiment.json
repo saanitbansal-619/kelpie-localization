@@ -1,0 +1,23 @@
+{
+  "label": "SIMULATION",
+  "study": "hydrophone_count_study",
+  "description": "Four versus five versus six hydrophones. Synthetic waveforms only. Not a hardware measurement. Does not modify the geometry study.",
+  "sound_speed_mps": 1480.0,
+  "sample_rate_hz": 256000.0,
+  "snr_levels_db": [40, 30, 20, 10, 5, 0],
+  "primary_comparison_snr_db": 20.0,
+  "sensor_counts": [4, 5, 6],
+  "source_positions_csv": "simulations/geometry_study/results/source_positions.csv",
+  "noise_draw_channels": 6,
+  "dc_offsets": [0.35, -0.22, 0.18, -0.40, 0.27, -0.15],
+  "bandpass_low_hz": 15000.0,
+  "bandpass_high_hz": 45000.0,
+  "bandpass_order": 4,
+  "pre_samples": 1024,
+  "post_samples": 1536,
+  "gcc_interpolation": 16,
+  "reference_channel": 0,
+  "capture_duration_s": 0.04,
+  "event_time_s": 0.015,
+  "search_margin_samples": 1.0
+}

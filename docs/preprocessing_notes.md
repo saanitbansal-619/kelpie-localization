@@ -22,9 +22,7 @@ one common multi-channel window
         ↓
 GCC-PHAT / TDOA
         ↓
-(later) direction estimation
-        ↓
-(later) 3D localization
+direction and 3D localization when geometry allows
 ```
 
 ## Why DC removal matters
