@@ -20,9 +20,11 @@ one combined-energy event index
         ↓
 one common multi-channel window
         ↓
-(later) GCC-PHAT / TDOA
+GCC-PHAT / TDOA
         ↓
-(later) 3D direction / position
+(later) direction estimation
+        ↓
+(later) 3D localization
 ```
 
 ## Why DC removal matters

@@ -16,9 +16,8 @@ educational signal-processing foundation.
 
 ## Current phase
 
-Hardware is not available yet. This milestone only builds and validates the
-**synthetic signal preprocessing pipeline** that will sit in front of TDOA /
-GCC-PHAT.
+Hardware is not available yet. This milestone builds and validates **synthetic
+TDOA estimation** on top of the existing preprocessing pipeline.
 
 What works today:
 
@@ -27,13 +26,23 @@ What works today:
 3. Remove DC and bandpass each channel without shifting them relative to each other
 4. Detect one shared acoustic event
 5. Extract one common multi-channel window
+6. Estimate TDOAs with GCC-PHAT and compare them to synthetic ground truth
 
 What is intentionally missing:
 
-* GCC-PHAT
-* TDOA solving
+* Direction estimation
 * 3D localization
 * ROS / Jetson / embedded hardware control
+* Hardware validation
+
+Status:
+
+| Stage | Status |
+| --- | --- |
+| Preprocessing | IMPLEMENTED |
+| Synthetic TDOA | IMPLEMENTED after validation |
+| Direction estimation | NOT IMPLEMENTED |
+| 3D localization | NOT IMPLEMENTED |
 
 ## Architecture overview
 
@@ -44,8 +53,10 @@ Synthetic 4-channel acoustic signal
         → preprocessing (DC removal + zero-phase bandpass)
         → event detection (one index from all channels)
         → common multi-channel window extraction
-        → later: GCC-PHAT / TDOA
-        → later: localization
+        → GCC-PHAT
+        → TDOA (relative to CH0)
+        → later: direction estimation
+        → later: 3D localization
 ```
 
 Engineering rule: preprocessing must never destroy the relative arrival-time
@@ -67,6 +78,7 @@ Default simulation parameters:
 ```
 robosub-hydrophone-localization/
 ├── README.md
+├── PROJECT_STATUS.md
 ├── CHANGELOG.md
 ├── requirements.txt
 ├── .gitignore
@@ -74,19 +86,24 @@ robosub-hydrophone-localization/
 │   ├── __init__.py
 │   ├── simulation.py      # synthetic chirp + 4-channel delays
 │   ├── preprocessing.py   # DC removal, bandpass, normalization
-│   └── detection.py       # shared event index + common window
+│   ├── detection.py       # shared event index + common window
+│   └── tdoa.py            # GCC-PHAT and multichannel TDOA
 ├── scripts/
 │   ├── generate_synthetic_data.py
-│   └── test_preprocessing.py
+│   ├── test_preprocessing.py
+│   ├── run_tdoa_demo.py
+│   └── run_tdoa_snr_experiment.py
 ├── tests/
 │   ├── __init__.py
-│   └── test_preprocessing.py
+│   ├── test_preprocessing.py
+│   └── test_tdoa.py
 ├── data/
 │   ├── raw/               # generated .npz captures
-│   └── processed/
+│   └── processed/         # SNR experiment CSV
 ├── plots/                 # demo figures
 └── docs/
-    └── preprocessing_notes.md
+    ├── preprocessing_notes.md
+    └── tdoa_notes.md
 ```
 
 ## Setup
@@ -131,30 +148,44 @@ indices, and array shapes. It writes:
 * `plots/event_window.png`
 * `plots/combined_energy.png`
 
+Run the TDOA demo (table + GCC-PHAT figure under `plots/`):
+
+```bash
+python scripts/run_tdoa_demo.py
+```
+
+Run the SNR experiment (CSV under `data/processed/`, plot under `plots/`):
+
+```bash
+python scripts/run_tdoa_snr_experiment.py
+```
+
 Run unit tests:
 
 ```bash
-python -m pytest tests/test_preprocessing.py -v
+python -m pytest -v
 ```
 
 ## Current milestone
 
-**Synthetic preprocessing foundation**
+**Synthetic TDOA estimation**
 
 The repository can create a known-delay 4-channel chirp, clean it, find one
-event, and cut one shared window. That window is the intended input to a
-future GCC-PHAT stage.
+event, cut one shared window, and recover the inter-channel delays with
+GCC-PHAT. Estimated TDOAs are compared with synthetic ground truth, including
+an SNR sweep that reports how absolute error grows as noise increases.
 
 See [docs/preprocessing_notes.md](docs/preprocessing_notes.md) for why DC
-removal, zero-phase bandpass, and a common window are required, and why a
-short chirp is used instead of a continuous tone.
+removal, zero-phase bandpass, and a common window are required.
+
+See [docs/tdoa_notes.md](docs/tdoa_notes.md) for the TDOA sign convention,
+GCC-PHAT, sampling limits, interpolation, and physical delay bounds.
 
 ## Future roadmap
 
-1. GCC-PHAT on the common window → per-pair TDOA estimates
-2. Compare estimated delays against the synthetic ground truth
-3. Geometric solver for 3D direction / position from a known hydrophone array
-4. Replace the simulator with recorded 4-channel captures
-5. Only then: hardware acquisition, Jetson/ROS integration, and realtime constraints
+1. Hydrophone array geometry + direction estimation from the TDOA vector
+2. Geometric solver for 3D position from a known hydrophone array
+3. Replace the simulator with recorded 4-channel captures
+4. Only then: hardware acquisition, Jetson/ROS integration, and realtime constraints
 
 Every meaningful code change is recorded in [CHANGELOG.md](CHANGELOG.md).
