@@ -51,6 +51,13 @@ Separate folder: `simulations/hydrophone_count_study/`. It does not write into t
 
 ## Next phase
 
-Depends on a review of this simulation and on which shapes are practical to build.
+Hardware readiness and real-data integration. Hardware integration is not done.
 
-The useful next engineering work is still simulation until hardware arrives: coordinate uncertainty, sound-speed uncertainty, and, only if operations assume the source stays on one side of a plane, a separately labeled half-space test. Hardware validation starts when synchronized recordings exist, by comparing those recordings with this direct-path prediction.
+Future work:
+
+* Load real DAQ captures
+* Hardware sanity checks on those recordings
+* Real hydrophone recordings
+* Experimental TDOA validation against the direct-path simulation
+
+Simulation follow-ups that remain useful before or alongside hardware: coordinate uncertainty, sound-speed uncertainty, and, only if operations assume the source stays on one side of a plane, a separately labeled half-space test.

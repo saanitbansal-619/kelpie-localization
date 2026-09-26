@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-09-26 — repository cleanup
+
+### Changed
+
+* Added `.gitignore` for Python bytecode, pytest cache, the local virtual environment, and operating-system leftovers
+* Stopped tracking `.venv/` and `*.pyc` files. The environment remains on disk and can be recreated with `python -m venv .venv` and `pip install -r requirements.txt`
+* Removed `__pycache__/` directories and `.pytest_cache/`
+
+### Preserved
+
+* Synthetic capture, preprocessing, event detection, GCC-PHAT, geometry, localization, the five-geometry study, and the 4/5/6 hydrophone study
+* Professor-facing figures, result CSVs, tests, and technical notes
+* Hardware integration is not done. The next phase is hardware readiness and real-data loading
+
 ## 2026-09-26
 
 ### Added
