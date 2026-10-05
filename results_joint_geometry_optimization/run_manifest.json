@@ -1,0 +1,165 @@
+{
+  "label": "SIMULATION",
+  "study": "joint_geometry_optimization",
+  "pipeline": "change_2_waveform",
+  "comparison_with_tetrahedral": false,
+  "control_geometry_id": "h30_b1.00",
+  "h4_heights_m": [
+    0.3,
+    0.4,
+    0.5
+  ],
+  "base_scales": [
+    1.0,
+    1.25,
+    1.5
+  ],
+  "h4_sign": "positive, above the H1/H2/H3 plane",
+  "scaling": "H1/H2/H3 x and y about the triangle centroid; z unchanged; H4 xy at that centroid",
+  "classification_center_m": [
+    0.0,
+    0.0,
+    -0.0375
+  ],
+  "classification_rule": "Include an axis when its absolute component is at least 0.5 times the largest component. Bins with fewer than 5 unique sources are flagged INSUFFICIENT_SAMPLE_COUNT.",
+  "catastrophic_definition": "A trial is catastrophic when the solver rejects it or the accepted localization error exceeds 20 m.",
+  "number_of_trials": 100,
+  "random_seed": 20261004,
+  "paired_cases": true,
+  "carrier_frequency_hz": 40000.0,
+  "pulse_duration_s": 0.004,
+  "sampling_rate_hz": 256000.0,
+  "sound_speed_mps": 1480.0,
+  "apply_attenuation": false,
+  "snr": [
+    "noise-free",
+    "30 dB",
+    "20 dB",
+    "10 dB",
+    "5 dB",
+    "0 dB"
+  ],
+  "TDOA_method": "GCC-PHAT, existing src.tdoa.estimate_tdoas, search limited to that array's baseline/c",
+  "source_position_dataset": "first N rows of simulations/geometry_study/results/source_positions.csv",
+  "ranking_rule": "Accuracy rank sums median error, 95th percentile, and median angular error. Reliability rank sums success rate and catastrophic rate. Balanced rank sums those five. Median error alone is not the selector.",
+  "directional_geometry_ids": [
+    "h30_b1.00",
+    "h30_b1.25",
+    "h50_b1.25",
+    "h50_b1.50"
+  ],
+  "geometries": [
+    {
+      "geometry_id": "h30_b1.00",
+      "h4_height_m": 0.3,
+      "base_scale": 1.0,
+      "is_control": true,
+      "triangle_side_m": 0.25,
+      "max_baseline_m": 0.33291640592396965,
+      "roles": "control",
+      "pareto": false,
+      "rank_balanced": 9
+    },
+    {
+      "geometry_id": "h30_b1.25",
+      "h4_height_m": 0.3,
+      "base_scale": 1.25,
+      "is_control": false,
+      "triangle_side_m": 0.3125,
+      "max_baseline_m": 0.35007439685491615,
+      "roles": "best_reliability;best_balanced",
+      "pareto": true,
+      "rank_balanced": 1
+    },
+    {
+      "geometry_id": "h30_b1.50",
+      "h4_height_m": 0.3,
+      "base_scale": 1.5,
+      "is_control": false,
+      "triangle_side_m": 0.375,
+      "max_baseline_m": 0.37500000000000006,
+      "roles": "",
+      "pareto": false,
+      "rank_balanced": 8
+    },
+    {
+      "geometry_id": "h40_b1.00",
+      "h4_height_m": 0.4,
+      "base_scale": 1.0,
+      "is_control": false,
+      "triangle_side_m": 0.25,
+      "max_baseline_m": 0.4252450274057692,
+      "roles": "",
+      "pareto": true,
+      "rank_balanced": 4
+    },
+    {
+      "geometry_id": "h40_b1.25",
+      "h4_height_m": 0.4,
+      "base_scale": 1.25,
+      "is_control": false,
+      "triangle_side_m": 0.3125,
+      "max_baseline_m": 0.438807569822278,
+      "roles": "",
+      "pareto": true,
+      "rank_balanced": 4
+    },
+    {
+      "geometry_id": "h40_b1.50",
+      "h4_height_m": 0.4,
+      "base_scale": 1.5,
+      "is_control": false,
+      "triangle_side_m": 0.375,
+      "max_baseline_m": 0.45483513496650635,
+      "roles": "",
+      "pareto": true,
+      "rank_balanced": 4
+    },
+    {
+      "geometry_id": "h50_b1.00",
+      "h4_height_m": 0.5,
+      "base_scale": 1.0,
+      "is_control": false,
+      "triangle_side_m": 0.25,
+      "max_baseline_m": 0.5204164998665332,
+      "roles": "",
+      "pareto": true,
+      "rank_balanced": 7
+    },
+    {
+      "geometry_id": "h50_b1.25",
+      "h4_height_m": 0.5,
+      "base_scale": 1.25,
+      "is_control": false,
+      "triangle_side_m": 0.3125,
+      "max_baseline_m": 0.5315562842572115,
+      "roles": "",
+      "pareto": true,
+      "rank_balanced": 2
+    },
+    {
+      "geometry_id": "h50_b1.50",
+      "h4_height_m": 0.5,
+      "base_scale": 1.5,
+      "is_control": false,
+      "triangle_side_m": 0.375,
+      "max_baseline_m": 0.5448623679425842,
+      "roles": "best_accuracy",
+      "pareto": true,
+      "rank_balanced": 2
+    }
+  ],
+  "elapsed_s": 425.787,
+  "protected_result_directories": [
+    "results",
+    "results_h4_height_study",
+    "simulations\\noise_study\\results",
+    "simulations\\noise_study\\figures",
+    "simulations\\waveform_study\\results",
+    "simulations\\waveform_study\\figures",
+    "simulations\\geometry_study\\results",
+    "simulations\\geometry_study\\figures",
+    "simulations\\hydrophone_count_study\\results",
+    "simulations\\hydrophone_count_study\\figures"
+  ]
+}

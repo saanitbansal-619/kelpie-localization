@@ -37,7 +37,15 @@ from src.tdoa import estimate_tdoas
 
 
 def noise_std_for_snr(snr_db: float, fs: float) -> float:
-    """Match the existing TDOA SNR experiment: noise_std = RMS(chirp) / 10^(SNR/20)."""
+    """White-noise standard deviation for one SNR on the source chirp.
+
+    ``SNR_dB = 10 * log10(P_signal / P_noise)`` with power equal to mean
+    square. The expression below is the equivalent
+    ``RMS(chirp) / 10^(SNR/20)`` form used by the original TDOA SNR script.
+    ``P_signal`` is the chirp, not the zero-padded capture. The arithmetic is
+    left in this form so a rerun of the geometry study draws the same noise
+    scale it drew before.
+    """
     chirp = generate_chirp(fs=fs)
     signal_rms = float(np.sqrt(np.mean(chirp**2)))
     return signal_rms / (10.0 ** (float(snr_db) / 20.0))
@@ -174,8 +182,13 @@ def run_trial(
     sound_speed_mps: float,
     noise_std: float,
     settings: dict[str, Any],
+    noise_seed_value: int | None = None,
 ) -> dict[str, Any]:
-    """Simulate one source, one geometry, and one SNR. Return one result row."""
+    """Simulate one source, one geometry, and one SNR. Return one result row.
+
+    ``noise_seed_value``, when given, replaces the seed derived from the
+    source id and SNR. Existing callers omit it and keep that derived seed.
+    """
     source_m = np.asarray(source_m, dtype=float).reshape(3)
     distances, true_tdoa_s, delays = geometry_delays_samples(
         array,
@@ -183,7 +196,10 @@ def run_trial(
         fs=fs,
         sound_speed_mps=sound_speed_mps,
     )
-    seed = noise_seed(source_id, snr_db)
+    if noise_seed_value is None:
+        seed = noise_seed(source_id, snr_db)
+    else:
+        seed = int(noise_seed_value)
     channels = synthesize_delayed_capture(
         reference,
         delays,

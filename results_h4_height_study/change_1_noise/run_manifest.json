@@ -1,0 +1,638 @@
+{
+  "label": "SIMULATION",
+  "study": "h4_height_study",
+  "geometry": "three_plus_one",
+  "comparison_with_tetrahedral": false,
+  "coordinate_convention": {
+    "+X": "FRONT",
+    "-X": "BACK",
+    "+Y": "RIGHT",
+    "-Y": "LEFT",
+    "+Z": "ABOVE",
+    "-Z": "BELOW"
+  },
+  "classification_center": "centroid of fixed H1/H2/H3",
+  "classification_center_m": [
+    0.0,
+    0.0,
+    -0.0375
+  ],
+  "classification_rule": "Include an axis when its absolute component is at least 0.5 times the largest component. Label order is X, then Y, then Z. Bins with fewer than 5 unique sources are flagged INSUFFICIENT_SAMPLE_COUNT and are not removed.",
+  "catastrophic_definition": "A trial is catastrophic when the solver rejects it or the accepted localization error exceeds 20 m. Success rate still counts a huge accepted range as a success.",
+  "h1_h2_h3": [
+    {
+      "channel": "H0",
+      "label": "H1",
+      "x_m": 0.14433756729740646,
+      "y_m": 0.0,
+      "z_m": -0.0375
+    },
+    {
+      "channel": "H1",
+      "label": "H2",
+      "x_m": -0.07216878364870323,
+      "y_m": 0.125,
+      "z_m": -0.0375
+    },
+    {
+      "channel": "H2",
+      "label": "H3",
+      "x_m": -0.07216878364870323,
+      "y_m": -0.125,
+      "z_m": -0.0375
+    }
+  ],
+  "h4_original": {
+    "channel": "H3",
+    "label": "H4",
+    "x_m": 0.0,
+    "y_m": 0.0,
+    "z_m": 0.11249999999999999
+  },
+  "plane_z_m": -0.0375,
+  "heights": [
+    {
+      "h4_name": "h4_neg_30cm",
+      "h4_height_m": -0.3,
+      "h4_coordinate_m": [
+        0.0,
+        0.0,
+        -0.33749999999999997
+      ],
+      "maximum_baseline_m": 0.33291640592396965,
+      "hydrophones": [
+        {
+          "channel": "H0",
+          "label": "H1",
+          "x_m": 0.14433756729740646,
+          "y_m": 0.0,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H1",
+          "label": "H2",
+          "x_m": -0.07216878364870323,
+          "y_m": 0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H2",
+          "label": "H3",
+          "x_m": -0.07216878364870323,
+          "y_m": -0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H3",
+          "label": "H4",
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "z_m": -0.33749999999999997
+        }
+      ]
+    },
+    {
+      "h4_name": "h4_neg_20cm",
+      "h4_height_m": -0.2,
+      "h4_coordinate_m": [
+        0.0,
+        0.0,
+        -0.23750000000000002
+      ],
+      "maximum_baseline_m": 0.25000000000000006,
+      "hydrophones": [
+        {
+          "channel": "H0",
+          "label": "H1",
+          "x_m": 0.14433756729740646,
+          "y_m": 0.0,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H1",
+          "label": "H2",
+          "x_m": -0.07216878364870323,
+          "y_m": 0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H2",
+          "label": "H3",
+          "x_m": -0.07216878364870323,
+          "y_m": -0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H3",
+          "label": "H4",
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "z_m": -0.23750000000000002
+        }
+      ]
+    },
+    {
+      "h4_name": "h4_neg_15cm",
+      "h4_height_m": -0.15,
+      "h4_coordinate_m": [
+        0.0,
+        0.0,
+        -0.1875
+      ],
+      "maximum_baseline_m": 0.25000000000000006,
+      "hydrophones": [
+        {
+          "channel": "H0",
+          "label": "H1",
+          "x_m": 0.14433756729740646,
+          "y_m": 0.0,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H1",
+          "label": "H2",
+          "x_m": -0.07216878364870323,
+          "y_m": 0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H2",
+          "label": "H3",
+          "x_m": -0.07216878364870323,
+          "y_m": -0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H3",
+          "label": "H4",
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "z_m": -0.1875
+        }
+      ]
+    },
+    {
+      "h4_name": "h4_neg_10cm",
+      "h4_height_m": -0.1,
+      "h4_coordinate_m": [
+        0.0,
+        0.0,
+        -0.1375
+      ],
+      "maximum_baseline_m": 0.25000000000000006,
+      "hydrophones": [
+        {
+          "channel": "H0",
+          "label": "H1",
+          "x_m": 0.14433756729740646,
+          "y_m": 0.0,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H1",
+          "label": "H2",
+          "x_m": -0.07216878364870323,
+          "y_m": 0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H2",
+          "label": "H3",
+          "x_m": -0.07216878364870323,
+          "y_m": -0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H3",
+          "label": "H4",
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "z_m": -0.1375
+        }
+      ]
+    },
+    {
+      "h4_name": "h4_neg_05cm",
+      "h4_height_m": -0.05,
+      "h4_coordinate_m": [
+        0.0,
+        0.0,
+        -0.0875
+      ],
+      "maximum_baseline_m": 0.25000000000000006,
+      "hydrophones": [
+        {
+          "channel": "H0",
+          "label": "H1",
+          "x_m": 0.14433756729740646,
+          "y_m": 0.0,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H1",
+          "label": "H2",
+          "x_m": -0.07216878364870323,
+          "y_m": 0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H2",
+          "label": "H3",
+          "x_m": -0.07216878364870323,
+          "y_m": -0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H3",
+          "label": "H4",
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "z_m": -0.0875
+        }
+      ]
+    },
+    {
+      "h4_name": "h4_pos_05cm",
+      "h4_height_m": 0.05,
+      "h4_coordinate_m": [
+        0.0,
+        0.0,
+        0.012500000000000004
+      ],
+      "maximum_baseline_m": 0.25000000000000006,
+      "hydrophones": [
+        {
+          "channel": "H0",
+          "label": "H1",
+          "x_m": 0.14433756729740646,
+          "y_m": 0.0,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H1",
+          "label": "H2",
+          "x_m": -0.07216878364870323,
+          "y_m": 0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H2",
+          "label": "H3",
+          "x_m": -0.07216878364870323,
+          "y_m": -0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H3",
+          "label": "H4",
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "z_m": 0.012500000000000004
+        }
+      ]
+    },
+    {
+      "h4_name": "h4_pos_10cm",
+      "h4_height_m": 0.1,
+      "h4_coordinate_m": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "maximum_baseline_m": 0.25000000000000006,
+      "hydrophones": [
+        {
+          "channel": "H0",
+          "label": "H1",
+          "x_m": 0.14433756729740646,
+          "y_m": 0.0,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H1",
+          "label": "H2",
+          "x_m": -0.07216878364870323,
+          "y_m": 0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H2",
+          "label": "H3",
+          "x_m": -0.07216878364870323,
+          "y_m": -0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H3",
+          "label": "H4",
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "z_m": 0.0625
+        }
+      ]
+    },
+    {
+      "h4_name": "h4_pos_15cm",
+      "h4_height_m": 0.15,
+      "h4_coordinate_m": [
+        0.0,
+        0.0,
+        0.11249999999999999
+      ],
+      "maximum_baseline_m": 0.25000000000000006,
+      "hydrophones": [
+        {
+          "channel": "H0",
+          "label": "H1",
+          "x_m": 0.14433756729740646,
+          "y_m": 0.0,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H1",
+          "label": "H2",
+          "x_m": -0.07216878364870323,
+          "y_m": 0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H2",
+          "label": "H3",
+          "x_m": -0.07216878364870323,
+          "y_m": -0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H3",
+          "label": "H4",
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "z_m": 0.11249999999999999
+        }
+      ]
+    },
+    {
+      "h4_name": "h4_pos_20cm",
+      "h4_height_m": 0.2,
+      "h4_coordinate_m": [
+        0.0,
+        0.0,
+        0.1625
+      ],
+      "maximum_baseline_m": 0.25000000000000006,
+      "hydrophones": [
+        {
+          "channel": "H0",
+          "label": "H1",
+          "x_m": 0.14433756729740646,
+          "y_m": 0.0,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H1",
+          "label": "H2",
+          "x_m": -0.07216878364870323,
+          "y_m": 0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H2",
+          "label": "H3",
+          "x_m": -0.07216878364870323,
+          "y_m": -0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H3",
+          "label": "H4",
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "z_m": 0.1625
+        }
+      ]
+    },
+    {
+      "h4_name": "h4_pos_30cm",
+      "h4_height_m": 0.3,
+      "h4_coordinate_m": [
+        0.0,
+        0.0,
+        0.2625
+      ],
+      "maximum_baseline_m": 0.33291640592396965,
+      "hydrophones": [
+        {
+          "channel": "H0",
+          "label": "H1",
+          "x_m": 0.14433756729740646,
+          "y_m": 0.0,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H1",
+          "label": "H2",
+          "x_m": -0.07216878364870323,
+          "y_m": 0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H2",
+          "label": "H3",
+          "x_m": -0.07216878364870323,
+          "y_m": -0.125,
+          "z_m": -0.0375
+        },
+        {
+          "channel": "H3",
+          "label": "H4",
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "z_m": 0.2625
+        }
+      ]
+    }
+  ],
+  "number_of_trials": 100,
+  "random_seed": 20261004,
+  "speed_of_sound_mps": 1480.0,
+  "change_1_snr": [
+    "noise-free",
+    "30 dB",
+    "25 dB",
+    "20 dB",
+    "15 dB",
+    "10 dB",
+    "5 dB",
+    "0 dB"
+  ],
+  "change_2_snr": [
+    "noise-free",
+    "30 dB",
+    "20 dB",
+    "10 dB",
+    "5 dB",
+    "0 dB"
+  ],
+  "carrier_frequency_hz": 40000.0,
+  "pulse_duration_s": 0.004,
+  "sampling_rate_hz": 256000.0,
+  "TDOA_method": "GCC-PHAT, existing src.tdoa.estimate_tdoas, search limited to that array's baseline/c",
+  "apply_attenuation": false,
+  "source_position_dataset": {
+    "change_1": "generate_source_positions with the Change #1 seed, range, and elevation",
+    "change_2": "first N rows of simulations/geometry_study/results/source_positions.csv"
+  },
+  "change_1_direction_counts": [
+    {
+      "direction": "FRONT-BELOW",
+      "n_sources": 10,
+      "flag": "",
+      "study": "change_1"
+    },
+    {
+      "direction": "BACK-RIGHT-BELOW",
+      "n_sources": 1,
+      "flag": "INSUFFICIENT_SAMPLE_COUNT",
+      "study": "change_1"
+    },
+    {
+      "direction": "BACK-LEFT-ABOVE",
+      "n_sources": 1,
+      "flag": "INSUFFICIENT_SAMPLE_COUNT",
+      "study": "change_1"
+    },
+    {
+      "direction": "FRONT",
+      "n_sources": 5,
+      "flag": "",
+      "study": "change_1"
+    },
+    {
+      "direction": "FRONT-RIGHT-BELOW",
+      "n_sources": 3,
+      "flag": "INSUFFICIENT_SAMPLE_COUNT",
+      "study": "change_1"
+    },
+    {
+      "direction": "RIGHT-BELOW",
+      "n_sources": 6,
+      "flag": "",
+      "study": "change_1"
+    },
+    {
+      "direction": "FRONT-LEFT",
+      "n_sources": 8,
+      "flag": "",
+      "study": "change_1"
+    },
+    {
+      "direction": "FRONT-RIGHT",
+      "n_sources": 6,
+      "flag": "",
+      "study": "change_1"
+    },
+    {
+      "direction": "BACK",
+      "n_sources": 7,
+      "flag": "",
+      "study": "change_1"
+    },
+    {
+      "direction": "FRONT-ABOVE",
+      "n_sources": 3,
+      "flag": "INSUFFICIENT_SAMPLE_COUNT",
+      "study": "change_1"
+    },
+    {
+      "direction": "FRONT-LEFT-BELOW",
+      "n_sources": 4,
+      "flag": "INSUFFICIENT_SAMPLE_COUNT",
+      "study": "change_1"
+    },
+    {
+      "direction": "FRONT-LEFT-ABOVE",
+      "n_sources": 3,
+      "flag": "INSUFFICIENT_SAMPLE_COUNT",
+      "study": "change_1"
+    },
+    {
+      "direction": "LEFT-BELOW",
+      "n_sources": 4,
+      "flag": "INSUFFICIENT_SAMPLE_COUNT",
+      "study": "change_1"
+    },
+    {
+      "direction": "BACK-RIGHT-ABOVE",
+      "n_sources": 2,
+      "flag": "INSUFFICIENT_SAMPLE_COUNT",
+      "study": "change_1"
+    },
+    {
+      "direction": "RIGHT-ABOVE",
+      "n_sources": 5,
+      "flag": "",
+      "study": "change_1"
+    },
+    {
+      "direction": "BACK-LEFT-BELOW",
+      "n_sources": 1,
+      "flag": "INSUFFICIENT_SAMPLE_COUNT",
+      "study": "change_1"
+    },
+    {
+      "direction": "LEFT-ABOVE",
+      "n_sources": 4,
+      "flag": "INSUFFICIENT_SAMPLE_COUNT",
+      "study": "change_1"
+    },
+    {
+      "direction": "RIGHT",
+      "n_sources": 6,
+      "flag": "",
+      "study": "change_1"
+    },
+    {
+      "direction": "LEFT",
+      "n_sources": 6,
+      "flag": "",
+      "study": "change_1"
+    },
+    {
+      "direction": "FRONT-RIGHT-ABOVE",
+      "n_sources": 2,
+      "flag": "INSUFFICIENT_SAMPLE_COUNT",
+      "study": "change_1"
+    },
+    {
+      "direction": "BACK-ABOVE",
+      "n_sources": 4,
+      "flag": "INSUFFICIENT_SAMPLE_COUNT",
+      "study": "change_1"
+    },
+    {
+      "direction": "BACK-RIGHT",
+      "n_sources": 5,
+      "flag": "",
+      "study": "change_1"
+    },
+    {
+      "direction": "BACK-LEFT",
+      "n_sources": 4,
+      "flag": "INSUFFICIENT_SAMPLE_COUNT",
+      "study": "change_1"
+    }
+  ],
+  "ranking_rule": "Within a scope, heights are ranked separately on median error, 95th percentile, median angular error, success rate, catastrophic rate, and the standard deviation of sufficient per-direction medians. Change #2 also ranks median absolute TDOA error. rank_sum is the sum of those ranks. rank_overall 1 has the lowest sum.",
+  "elapsed_s": 630.905,
+  "protected_result_directories": [
+    "results",
+    "simulations\\noise_study\\results",
+    "simulations\\noise_study\\figures",
+    "simulations\\waveform_study\\results",
+    "simulations\\waveform_study\\figures",
+    "simulations\\geometry_study\\results",
+    "simulations\\geometry_study\\figures",
+    "simulations\\hydrophone_count_study\\results",
+    "simulations\\hydrophone_count_study\\figures"
+  ]
+}

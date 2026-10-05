@@ -25,6 +25,11 @@ SOUND_SPEED_MPS = 1480.0
 # Nominal maximum array dimension used to keep the five shapes comparable.
 TARGET_BASELINE_M = 0.25
 
+# Height of the fourth 3+1 hydrophone above the triangle centroid, before
+# the four-phone centroid is shifted to the origin. A negative value puts
+# that hydrophone below the triangle.
+DEFAULT_THREE_PLUS_ONE_Z_OFFSET_M = 0.15
+
 
 @dataclass(frozen=True)
 class HydrophoneArray:
@@ -99,7 +104,7 @@ def _tetrahedron_coordinates(edge_m: float = TARGET_BASELINE_M) -> np.ndarray:
 
 def _three_plus_one_coordinates(
     side_m: float = TARGET_BASELINE_M,
-    mast_height_m: float = 0.15,
+    mast_height_m: float = DEFAULT_THREE_PLUS_ONE_Z_OFFSET_M,
 ) -> np.ndarray:
     """Equilateral triangle in a horizontal plane plus one elevated phone.
 
@@ -235,6 +240,38 @@ def get_geometry(key: str) -> HydrophoneArray:
     except KeyError as exc:
         known = ", ".join(GEOMETRY_BY_KEY)
         raise KeyError(f"unknown geometry {key!r}; known keys: {known}") from exc
+
+
+def make_three_plus_one(z_offset_m: float = DEFAULT_THREE_PLUS_ONE_Z_OFFSET_M) -> HydrophoneArray:
+    """Build the 3+1 array with a chosen vertical offset.
+
+    ``z_offset_m`` is the height of H3 above the H0/H1/H2 triangle centroid
+    before the four-phone centroid is moved to the origin. Positive and
+    negative values are mirror images through the XY plane. The triangle
+    side stays 0.25 m, the same maximum baseline as the tetrahedron.
+
+    The catalog entry from ``get_geometry("three_plus_one")`` is this
+    function at ``DEFAULT_THREE_PLUS_ONE_Z_OFFSET_M``.
+    """
+    offset = float(z_offset_m)
+    if not np.isfinite(offset) or offset == 0.0:
+        raise ValueError("z_offset_m must be a non-zero finite height")
+    side = "above" if offset > 0.0 else "below"
+    catalog = GEOMETRY_BY_KEY["three_plus_one"]
+    return HydrophoneArray(
+        key=catalog.key,
+        name=catalog.name,
+        description=(
+            "Equilateral triangle of side 0.25 m in a horizontal plane, "
+            f"plus a fourth hydrophone {abs(offset):.3f} m {side} the "
+            "triangle centroid. Coordinates are then shifted so the "
+            "four-phone centroid is the origin."
+        ),
+        coordinates_m=_three_plus_one_coordinates(mast_height_m=offset),
+        edges=catalog.edges,
+        figure_stem=catalog.figure_stem,
+        expected_class=catalog.expected_class,
+    )
 
 
 def pairwise_distances(hydrophones_m: np.ndarray) -> np.ndarray:

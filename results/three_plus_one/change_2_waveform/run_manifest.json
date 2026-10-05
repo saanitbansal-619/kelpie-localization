@@ -1,0 +1,77 @@
+{
+  "label": "SIMULATION",
+  "study": "change_2_waveform",
+  "geometry_name": "three_plus_one",
+  "hydrophone_count": 4,
+  "hydrophone_coordinates": [
+    {
+      "channel": "H0",
+      "requested_label": "H1",
+      "x_m": 0.14433756729740646,
+      "y_m": 0.0,
+      "z_m": -0.0375
+    },
+    {
+      "channel": "H1",
+      "requested_label": "H2",
+      "x_m": -0.07216878364870323,
+      "y_m": 0.125,
+      "z_m": -0.0375
+    },
+    {
+      "channel": "H2",
+      "requested_label": "H3",
+      "x_m": -0.07216878364870323,
+      "y_m": -0.125,
+      "z_m": -0.0375
+    },
+    {
+      "channel": "H3",
+      "requested_label": "H4",
+      "x_m": 0.0,
+      "y_m": 0.0,
+      "z_m": 0.11249999999999999
+    }
+  ],
+  "channel_order_note": "Coordinates are stored as H0, H1, H2, H3. Those channels are the requested H1, H2, H3, H4 in that order.",
+  "maximum_baseline_m": 0.25000000000000006,
+  "array_center_m": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "source_position_dataset": "simulations\\geometry_study\\results\\source_positions.csv first 100 rows. The same rows are used for every geometry. Frequency comparison uses the first 25 rows.",
+  "number_of_trials": 100,
+  "random_seed": 20261004,
+  "SNR_conditions": [
+    "noise-free",
+    "30 dB",
+    "20 dB",
+    "10 dB",
+    "5 dB",
+    "0 dB"
+  ],
+  "speed_of_sound_mps": 1480.0,
+  "n_rows": 600,
+  "elapsed_s": 25.46,
+  "preserved_original_results": [
+    "simulations/noise_study/results",
+    "simulations/waveform_study/results"
+  ],
+  "z_offset_m": 0.15,
+  "z_offset_note": "z_offset_m is the H3 height above the H0/H1/H2 centroid before the four-phone centroid is shifted to the origin. make_three_plus_one(-z_offset_m) mirrors this array.",
+  "carrier_frequency_hz": 40000.0,
+  "comparison_frequencies_hz": [
+    25000.0,
+    30000.0,
+    35000.0,
+    40000.0
+  ],
+  "pulse_duration_s": 0.004,
+  "sampling_rate_hz": 256000.0,
+  "TDOA_method": "GCC-PHAT, existing src.tdoa.estimate_tdoas, search limited to baseline/c",
+  "fractional_delay": "linear interpolation in src.simulation.delay_signal",
+  "apply_attenuation": false,
+  "n_frequency_trials": 25,
+  "n_frequency_rows": 200
+}

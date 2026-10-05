@@ -1,0 +1,20 @@
+{
+  "label": "SIMULATION",
+  "geometry": "tetrahedral",
+  "n_hydrophones": 4,
+  "n_trials_per_condition": 100,
+  "snr_levels_db": [
+    30.0,
+    25.0,
+    20.0,
+    15.0,
+    10.0,
+    5.0,
+    0.0
+  ],
+  "include_noise_free": true,
+  "random_seed": 20261004,
+  "n_rows": 800,
+  "elapsed_s": 20.162,
+  "noise_model": "SNR_dB = 10*log10(P_chirp / P_noise); independent Gaussian sample on each hydrophone; one noise pattern per trial, scaled to each SNR"
+}

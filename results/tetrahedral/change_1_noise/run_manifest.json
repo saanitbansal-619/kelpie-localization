@@ -1,0 +1,64 @@
+{
+  "label": "SIMULATION",
+  "study": "change_1_noise",
+  "geometry_name": "tetrahedral",
+  "hydrophone_count": 4,
+  "hydrophone_coordinates": [
+    {
+      "channel": "H0",
+      "requested_label": "H1",
+      "x_m": 0.08838834764831843,
+      "y_m": 0.08838834764831843,
+      "z_m": 0.08838834764831843
+    },
+    {
+      "channel": "H1",
+      "requested_label": "H2",
+      "x_m": 0.08838834764831843,
+      "y_m": -0.08838834764831843,
+      "z_m": -0.08838834764831843
+    },
+    {
+      "channel": "H2",
+      "requested_label": "H3",
+      "x_m": -0.08838834764831843,
+      "y_m": 0.08838834764831843,
+      "z_m": -0.08838834764831843
+    },
+    {
+      "channel": "H3",
+      "requested_label": "H4",
+      "x_m": -0.08838834764831843,
+      "y_m": -0.08838834764831843,
+      "z_m": 0.08838834764831843
+    }
+  ],
+  "channel_order_note": "Coordinates are stored as H0, H1, H2, H3. Those channels are the requested H1, H2, H3, H4 in that order.",
+  "maximum_baseline_m": 0.24999999999999997,
+  "array_center_m": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "source_position_dataset": "generate_source_positions, seed 20261004, 100 sources, range 2\u20138 m, elevation \u221250\u00b0 to 50\u00b0, azimuth 0\u2013360\u00b0. The draw does not depend on geometry.",
+  "number_of_trials": 100,
+  "random_seed": 20261004,
+  "SNR_conditions": [
+    "noise-free",
+    "30 dB",
+    "25 dB",
+    "20 dB",
+    "15 dB",
+    "10 dB",
+    "5 dB",
+    "0 dB"
+  ],
+  "speed_of_sound_mps": 1480.0,
+  "n_rows": 800,
+  "elapsed_s": 24.985,
+  "preserved_original_results": [
+    "simulations/noise_study/results",
+    "simulations/waveform_study/results"
+  ],
+  "noise_model": "SNR_dB = 10*log10(P_chirp / P_noise); independent Gaussian noise on each hydrophone; seed = random_seed + trial_index, shared across SNR and geometry"
+}

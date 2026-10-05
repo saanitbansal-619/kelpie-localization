@@ -5,6 +5,14 @@ before any hardware is available. A short linear chirp is treated as a single
 acoustic source. Four channels are formed by delaying that source, then noise
 and DC offsets are added to mimic a messy analog front-end.
 
+SNR, when requested, sets the noise power from the signal power:
+
+    SNR_dB = 10 * log10(P_signal / P_noise)
+
+``P_signal`` is the mean square of the source chirp. ``P_noise`` is the
+variance of zero-mean Gaussian noise, so the noise standard deviation is
+``sqrt(P_noise)``.
+
 Default sample rate: 256 kHz
 Default chirp: 18 kHz → 42 kHz over about 4 ms
 """
@@ -86,6 +94,109 @@ def generate_chirp(
     return signal.astype(float)
 
 
+DEFAULT_PINGER_FREQUENCY_HZ = 40_000.0
+DEFAULT_PINGER_DURATION_S = 0.004
+DEFAULT_PINGER_TAPER_ALPHA = 0.1
+
+
+def generate_pinger_pulse(
+    fs: float = DEFAULT_FS,
+    frequency_hz: float = DEFAULT_PINGER_FREQUENCY_HZ,
+    duration_s: float = DEFAULT_PINGER_DURATION_S,
+    amplitude: float = 1.0,
+    taper: bool = True,
+    taper_alpha: float = DEFAULT_PINGER_TAPER_ALPHA,
+) -> np.ndarray:
+    """Generate one pulsed sinusoid.
+
+    The burst is ``amplitude * sin(2 π f t)`` for ``duration_s`` seconds.
+    A short Tukey taper is on by default so the pulse does not start and
+    stop with a click. ``taper_alpha`` is the Tukey fraction; 0.1 leaves
+    most of a 4 ms burst at full amplitude.
+
+    The configured amplitude is the amplitude of the sinusoid before the
+    taper. When spherical spreading is applied later, this amplitude is the
+    amplitude at the attenuation reference range (1 m by default).
+    """
+    if fs <= 0:
+        raise ValueError("fs must be positive")
+    if duration_s <= 0:
+        raise ValueError("duration_s must be positive")
+    if frequency_hz <= 0:
+        raise ValueError("frequency_hz must be positive")
+    if frequency_hz >= 0.5 * fs:
+        raise ValueError("frequency_hz must be below the Nyquist frequency")
+    if not np.isfinite(amplitude):
+        raise ValueError("amplitude must be finite")
+    if not 0.0 <= taper_alpha <= 1.0:
+        raise ValueError("taper_alpha must be in [0, 1]")
+
+    n_samples = int(round(duration_s * fs))
+    if n_samples < 2:
+        raise ValueError("pulse is too short for the given sample rate")
+
+    t = np.arange(n_samples, dtype=float) / float(fs)
+    pulse = float(amplitude) * np.sin(2.0 * np.pi * float(frequency_hz) * t)
+    if taper and taper_alpha > 0.0:
+        pulse = pulse * tukey(n_samples, alpha=float(taper_alpha))
+    return pulse.astype(float)
+
+
+def synthesize_pinger_capture(
+    pulse: np.ndarray,
+    arrival_times_s: np.ndarray,
+    fs: float,
+    capture_duration_s: float,
+    distances_m: np.ndarray | None = None,
+    apply_attenuation: bool = False,
+    attenuation_reference_m: float = 1.0,
+) -> np.ndarray:
+    """Place one pulse on each hydrophone at a fractional propagation delay.
+
+    Sample 0 of the capture is emission time. Channel ``i`` is the pulse
+    delayed by ``arrival_times_s[i]`` seconds. The delay is
+    ``fs * arrival_time`` samples and is not rounded: :func:`delay_signal`
+    uses linear interpolation.
+
+    When ``apply_attenuation`` is True, each channel is multiplied by
+    ``attenuation_reference_m / distance_i``, so amplitude falls as ``1/d``.
+    ``distances_m`` is required in that case and must be positive.
+    """
+    pulse = np.asarray(pulse, dtype=float)
+    arrival_times_s = np.asarray(arrival_times_s, dtype=float)
+    if pulse.ndim != 1 or pulse.size < 2:
+        raise ValueError("pulse must be a 1-D array with at least 2 samples")
+    if arrival_times_s.ndim != 1 or arrival_times_s.size < 1:
+        raise ValueError("arrival_times_s must contain one time per hydrophone")
+    if fs <= 0 or capture_duration_s <= 0:
+        raise ValueError("fs and capture_duration_s must be positive")
+    if np.any(arrival_times_s < 0) or not np.all(np.isfinite(arrival_times_s)):
+        raise ValueError("arrival times must be finite and non-negative")
+
+    n_capture = int(round(capture_duration_s * fs))
+    if pulse.size > n_capture:
+        raise ValueError("pulse is longer than the capture")
+
+    reference = np.zeros(n_capture, dtype=float)
+    reference[: pulse.size] = pulse
+    delay_samples = arrival_times_s * float(fs)
+    channels = apply_channel_delays(reference, delay_samples)
+
+    if apply_attenuation:
+        if distances_m is None:
+            raise ValueError("distances_m is required when attenuation is on")
+        distances_m = np.asarray(distances_m, dtype=float)
+        if distances_m.shape != arrival_times_s.shape:
+            raise ValueError("distances_m must have one entry per hydrophone")
+        if np.any(distances_m <= 0) or not np.all(np.isfinite(distances_m)):
+            raise ValueError("distances must be finite and positive")
+        if attenuation_reference_m <= 0:
+            raise ValueError("attenuation_reference_m must be positive")
+        scales = float(attenuation_reference_m) / distances_m
+        channels = channels * scales[:, np.newaxis]
+    return channels
+
+
 def delay_signal(signal: np.ndarray, delay_samples: float) -> np.ndarray:
     """Shift a 1-D signal by a possibly fractional number of samples.
 
@@ -144,16 +255,74 @@ def apply_channel_delays(
     return channels
 
 
+def signal_power(samples: np.ndarray) -> float:
+    """Mean-square amplitude of ``samples``.
+
+    This is ``P_signal`` in ``SNR_dB = 10 * log10(P_signal / P_noise)``.
+    Every sample in the array is included. The value is not a peak amplitude
+    and it is not limited to a frequency band.
+    """
+    samples = np.asarray(samples, dtype=float)
+    if samples.size == 0:
+        raise ValueError("samples must be non-empty")
+    power = float(np.mean(samples**2))
+    if not np.isfinite(power) or power <= 0.0:
+        raise ValueError("signal power must be finite and positive")
+    return power
+
+
+def noise_power_for_snr_db(signal_power_value: float, snr_db: float) -> float:
+    """Return ``P_noise = P_signal / 10^(SNR_dB / 10)``.
+
+    Rearrangement of ``SNR_dB = 10 * log10(P_signal / P_noise)``.
+    """
+    signal_power_value = float(signal_power_value)
+    snr_db = float(snr_db)
+    if not np.isfinite(signal_power_value) or signal_power_value <= 0.0:
+        raise ValueError("signal_power_value must be finite and positive")
+    if not np.isfinite(snr_db):
+        raise ValueError("snr_db must be finite")
+    return float(signal_power_value / (10.0 ** (snr_db / 10.0)))
+
+
+def noise_std_from_snr_db(samples: np.ndarray, snr_db: float) -> float:
+    """Standard deviation of zero-mean noise at the requested SNR.
+
+    Power is the mean square. For zero-mean noise, power equals variance, so
+    the standard deviation is ``sqrt(P_noise)``. That is the same number as
+    ``rms(samples) / 10^(SNR_dB / 20)``.
+    """
+    return float(np.sqrt(noise_power_for_snr_db(signal_power(samples), snr_db)))
+
+
+def estimate_snr_db(signal: np.ndarray, noise: np.ndarray) -> float:
+    """SNR in dB from a signal and the noise that was added to it.
+
+    Both arrays must have the same shape. Each is reduced with
+    :func:`signal_power`.
+    """
+    signal = np.asarray(signal, dtype=float)
+    noise = np.asarray(noise, dtype=float)
+    if signal.shape != noise.shape:
+        raise ValueError("signal and noise must have the same shape")
+    return float(10.0 * np.log10(signal_power(signal) / signal_power(noise)))
+
+
 def add_gaussian_noise(
     signals: np.ndarray,
     noise_std: float,
     rng: np.random.Generator | None = None,
     seed: int | None = None,
 ) -> np.ndarray:
-    """Add independent Gaussian noise to every sample.
+    """Add independent Gaussian noise to every sample of every channel.
 
-    ``noise_std`` is the standard deviation of the noise, in the same units as
-    the signal. A value of 0 leaves the input unchanged (still copied).
+    The draw has the same shape as ``signals``, so hydrophone channels do not
+    share a noise waveform. ``noise_std`` is the standard deviation of that
+    noise, in the same units as the signal. A value of 0 leaves the input
+    unchanged (still copied) and does not consume the random generator.
+
+    The same ``seed`` reproduces the same standard-normal pattern. A different
+    ``noise_std`` with that seed scales the pattern: ``std_2 / std_1``.
     """
     signals = np.asarray(signals, dtype=float)
     if noise_std < 0:

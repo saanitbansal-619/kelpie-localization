@@ -1,5 +1,67 @@
 # Changelog
 
+## 2026-10-05 — joint H4 height and base scale
+
+### Added
+
+* `simulations/joint_geometry_study/`: Change #2 on nine 3+1 layouts, H4 at +30, +40, and +50 cm and the catalog triangle at 1.00×, 1.25×, and 1.50×. The 30 cm / 1.00× layout is the control
+* `results_joint_geometry_optimization/` for the coordinates, trial table, comparison, SNR and directional summaries, and plots
+
+### Preserved
+
+* `results/`, `results_h4_height_study/`, and the noise-study and waveform-study results
+
+## 2026-10-04 — 3+1 H4 height sweep
+
+### Added
+
+* `simulations/h4_height_study/`: the Change #1 and Change #2 experiments on the existing 3+1 triangle, with only H4's height changing. Heights are -30, -20, -15, -10, -5, +5, +10, +15, +20, and +30 cm from the triangle plane
+* `results_h4_height_study/` for every table and figure from that sweep
+
+### Preserved
+
+* `results/`, the noise-study results, and the waveform-study results. This sweep does not read or write them
+
+## 2026-10-04 — tetrahedral versus 3+1
+
+### Added
+
+* `make_three_plus_one(z_offset_m)` in `src/geometry.py`. The default offset, +0.15 m, is the existing catalog array. A negative offset mirrors it. The triangle side stays 0.25 m, the same maximum baseline as the tetrahedron
+* `simulations/geometry_pair/`: the Change #1 noise study and the Change #2 waveform study, each run on the tetrahedron and on 3+1 with the same sources, seed, SNR list, and solver. Results go to `results/<geometry>/`
+* `results/geometry_comparison/` with the side-by-side summary, directional table, and comparison plots
+
+### Preserved
+
+* `simulations/noise_study/results/`, `simulations/waveform_study/results/`, and their figures. The new tetrahedral runs reproduce those summaries and do not replace the files
+
+## 2026-10-04 — pulsed pinger waveforms
+
+### Added
+
+* `generate_pinger_pulse` and `synthesize_pinger_capture` in `src/simulation.py`. A configurable pulsed sinusoid is placed at each hydrophone with a fractional propagation delay. Optional `1/distance` attenuation is off in the reported sweep
+* `simulations/waveform_study/`: 100 trials of a 40 kHz, 4 ms pulse at noise-free, 30, 20, 10, 5, and 0 dB. TDOA is estimated with the existing GCC-PHAT path and passed to the existing solver. A 25-trial comparison repeats 25, 30, 35, and 40 kHz
+* `results/waveform_experiment_results.csv`, `results/waveform_experiment_summary.csv`, the frequency-comparison tables, and the waveform, GCC-PHAT, SNR, and carrier figures
+* Tests for carrier frequency, pulse length, geometric delay, fractional delay, GCC-PHAT on a known lag, noise-free agreement with geometry, and seed reproducibility
+
+### Preserved
+
+* The localization-versus-SNR study and its result files. That experiment was not rerun or replaced
+* The chirp capture path, geometry study, and localization solver
+
+## 2026-10-04 — localization versus SNR
+
+### Added
+
+* `signal_power`, `noise_power_for_snr_db`, `noise_std_from_snr_db`, and `estimate_snr_db` in `src/simulation.py`. Noise power comes from `SNR_dB = 10 * log10(P_signal / P_noise)` with power equal to mean square
+* `simulations/noise_study/`: 100 trials at each of 30, 25, 20, 15, 10, 5, and 0 dB, plus a noise-free baseline, on the existing tetrahedral array. The geometry-study trial runner is reused. One source set and one noise pattern are scaled across SNR levels
+* `results/noise_experiment_results.csv`, `results/noise_experiment_summary.csv`, and localization, distribution, success-rate, and angular-error figures
+* Tests for the SNR definition, seed reproducibility, the increase of noise power at lower SNR, and the existing zero-noise capture path
+
+### Preserved
+
+* Geometry-study and hydrophone-count result files. Those Monte Carlo runs were not repeated
+* The previous `noise_std = RMS(chirp) / 10^(SNR/20)` expression in the geometry-study helper, which matches the new power formula
+
 ## 2026-09-26 — repository cleanup
 
 ### Changed

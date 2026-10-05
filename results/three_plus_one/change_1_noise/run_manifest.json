@@ -1,0 +1,66 @@
+{
+  "label": "SIMULATION",
+  "study": "change_1_noise",
+  "geometry_name": "three_plus_one",
+  "hydrophone_count": 4,
+  "hydrophone_coordinates": [
+    {
+      "channel": "H0",
+      "requested_label": "H1",
+      "x_m": 0.14433756729740646,
+      "y_m": 0.0,
+      "z_m": -0.0375
+    },
+    {
+      "channel": "H1",
+      "requested_label": "H2",
+      "x_m": -0.07216878364870323,
+      "y_m": 0.125,
+      "z_m": -0.0375
+    },
+    {
+      "channel": "H2",
+      "requested_label": "H3",
+      "x_m": -0.07216878364870323,
+      "y_m": -0.125,
+      "z_m": -0.0375
+    },
+    {
+      "channel": "H3",
+      "requested_label": "H4",
+      "x_m": 0.0,
+      "y_m": 0.0,
+      "z_m": 0.11249999999999999
+    }
+  ],
+  "channel_order_note": "Coordinates are stored as H0, H1, H2, H3. Those channels are the requested H1, H2, H3, H4 in that order.",
+  "maximum_baseline_m": 0.25000000000000006,
+  "array_center_m": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "source_position_dataset": "generate_source_positions, seed 20261004, 100 sources, range 2\u20138 m, elevation \u221250\u00b0 to 50\u00b0, azimuth 0\u2013360\u00b0. The draw does not depend on geometry.",
+  "number_of_trials": 100,
+  "random_seed": 20261004,
+  "SNR_conditions": [
+    "noise-free",
+    "30 dB",
+    "25 dB",
+    "20 dB",
+    "15 dB",
+    "10 dB",
+    "5 dB",
+    "0 dB"
+  ],
+  "speed_of_sound_mps": 1480.0,
+  "n_rows": 800,
+  "elapsed_s": 24.726,
+  "preserved_original_results": [
+    "simulations/noise_study/results",
+    "simulations/waveform_study/results"
+  ],
+  "z_offset_m": 0.15,
+  "z_offset_note": "z_offset_m is the H3 height above the H0/H1/H2 centroid before the four-phone centroid is shifted to the origin. make_three_plus_one(-z_offset_m) mirrors this array.",
+  "noise_model": "SNR_dB = 10*log10(P_chirp / P_noise); independent Gaussian noise on each hydrophone; seed = random_seed + trial_index, shared across SNR and geometry"
+}

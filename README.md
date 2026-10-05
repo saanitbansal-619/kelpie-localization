@@ -16,13 +16,15 @@ educational signal-processing foundation.
 
 ## Current phase
 
-**Hydrophone geometry study, plus a separate hydrophone-count study**
+**Hydrophone geometry study, a hydrophone-count study, and a localization-versus-SNR study**
 
 Hardware is not available. The geometry study is a completed simulation of
 five four-hydrophone array shapes. Its results are preserved. A later
 simulation, in `simulations/hydrophone_count_study/`, compares 4, 5, and 6
-hydrophones inside the same physical envelope. Neither study is a hardware
-measurement.
+hydrophones inside the same physical envelope. A third simulation, in
+`simulations/noise_study/`, adds broadband Gaussian noise on the existing
+tetrahedral array and records how localization error and success rate change
+with SNR. None of these studies is a hardware measurement.
 
 What works today:
 
@@ -99,7 +101,11 @@ robosub-hydrophone-localization/
 │   ├── geometry.py        # five arrays and path-length TDOAs
 │   └── localization.py    # TDOA least squares, degeneracy, direction
 ├── simulations/
-│   └── geometry_study/    # geometry experiment, figures, and write-up
+│   ├── geometry_study/    # geometry experiment, figures, and write-up
+│   ├── hydrophone_count_study/
+│   ├── noise_study/       # localization error versus SNR
+│   ├── waveform_study/    # pulsed-pinger waveforms and GCC-PHAT TDOA
+│   └── geometry_pair/     # tetrahedral versus 3+1, same trials
 ├── scripts/
 │   ├── generate_synthetic_data.py
 │   ├── test_preprocessing.py
@@ -182,6 +188,48 @@ and `simulations/geometry_study/figures/`):
 python simulations/geometry_study/run_geometry_study.py
 ```
 
+Run the localization-versus-SNR study (writes
+`simulations/noise_study/results/` and `simulations/noise_study/figures/`).
+This does not modify the geometry-study or hydrophone-count results:
+
+```bash
+python simulations/noise_study/run_noise_experiment.py
+```
+
+Run the pulsed-pinger waveform study (writes
+`simulations/waveform_study/results/` and `simulations/waveform_study/figures/`).
+TDOAs are estimated from the waveforms. This does not modify the SNR study:
+
+```bash
+python simulations/waveform_study/run_waveform_experiment.py
+```
+
+Run Change #1 and Change #2 on the tetrahedron and on 3+1. This writes
+`results/` and does not modify the folders above:
+
+```bash
+python simulations/geometry_pair/run_change1.py --geometry tetrahedral
+python simulations/geometry_pair/run_change1.py --geometry three_plus_one
+python simulations/geometry_pair/run_change2.py --geometry tetrahedral
+python simulations/geometry_pair/run_change2.py --geometry three_plus_one
+python simulations/geometry_pair/compare.py
+```
+
+Run the separate 3+1 H4-height study. This writes `results_h4_height_study/`
+and does not modify the folders above:
+
+```bash
+python simulations/h4_height_study/run_h4_height_study.py
+```
+
+Run the joint H4-height and base-scale study. This writes
+`results_joint_geometry_optimization/` and does not modify the folders above
+or `results_h4_height_study/`:
+
+```bash
+python simulations/joint_geometry_study/run_joint_geometry_study.py
+```
+
 Run unit tests:
 
 ```bash
@@ -209,6 +257,17 @@ removal, zero-phase bandpass, and a common window are required.
 
 See [docs/tdoa_notes.md](docs/tdoa_notes.md) for the TDOA sign convention,
 GCC-PHAT, sampling limits, interpolation, and physical delay bounds.
+
+See [simulations/noise_study/README.md](simulations/noise_study/README.md)
+for the SNR definition, how the noise power is calculated, and how to read
+the localization-versus-SNR figures.
+
+See [simulations/waveform_study/README.md](simulations/waveform_study/README.md)
+for the pulsed pinger, fractional propagation delay, and waveform TDOA.
+
+See [simulations/geometry_pair/README.md](simulations/geometry_pair/README.md)
+for the tetrahedral versus 3+1 comparison. Those runs write under `results/`
+and leave the original noise-study and waveform-study files in place.
 
 ## Future roadmap
 

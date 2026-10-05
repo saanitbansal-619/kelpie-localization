@@ -1,0 +1,204 @@
+study,geometry,direction,snr_scope,number_of_trials,n_sources,n_successful,median_localization_error,95th_percentile_error,median_angular_error,success_rate
+change_2_waveform,three_plus_one,LEFT-ABOVE,all,12,2,9,3.455910479,5.723025136,7.80597561,0.75
+change_2_waveform,three_plus_one,LEFT-BELOW,all,18,3,15,2.027661986,3.847635827,0.8094694682,0.8333333333
+change_2_waveform,three_plus_one,BELOW,all,6,1,6,5.466406921,7.744970197,9.51897306,1
+change_2_waveform,three_plus_one,FRONT-BELOW,all,30,5,27,3.21573958,13.92823476,6.683371888,0.9
+change_2_waveform,three_plus_one,RIGHT-ABOVE,all,12,2,11,1.475426878,5.676856366,0.3070607147,0.9166666667
+change_2_waveform,three_plus_one,BACK-BELOW,all,24,4,17,1.877267634,5.591020758,0.3529654334,0.7083333333
+change_2_waveform,three_plus_one,RIGHT-FRONT,all,6,1,3,1.256569797,1.256569797,0.09586587651,0.5
+change_2_waveform,three_plus_one,FRONT-LEFT,all,18,3,12,1.352287841,162.8112796,0.08845682207,0.6666666667
+change_2_waveform,three_plus_one,BACK-ABOVE,all,30,5,20,3.312315916,57.1550571,1.109231161,0.6666666667
+change_2_waveform,three_plus_one,ABOVE-BACK,all,18,3,18,2.639231411,3.749821619,3.093234847,1
+change_2_waveform,three_plus_one,ABOVE-FRONT,all,18,3,14,3.23032615,6.285493642,0.08764497961,0.7777777778
+change_2_waveform,three_plus_one,FRONT-RIGHT,all,6,1,4,4.292198364,7.835223816,43.1648964,0.6666666667
+change_2_waveform,three_plus_one,BACK-RIGHT,all,18,3,15,2.515016642,6.652189019,0.7036602864,0.8333333333
+change_2_waveform,three_plus_one,RIGHT,all,66,11,53,3.252893353,13.77164481,0.1840960343,0.803030303
+change_2_waveform,three_plus_one,BACK,all,48,8,35,2.555812567,10.73426074,0.2446030967,0.7291666667
+change_2_waveform,three_plus_one,FRONT,all,72,12,51,2.067490851,6.851223782,0.210671432,0.7083333333
+change_2_waveform,three_plus_one,RIGHT-BACK,all,6,1,6,3.909811363,8.447283775,9.603264423,1
+change_2_waveform,three_plus_one,BACK-LEFT,all,12,2,9,2.855585642,14.14637246,6.941901811,0.75
+change_2_waveform,three_plus_one,LEFT-BACK,all,24,4,19,1.070969871,6.473260902,0.06180158047,0.7916666667
+change_2_waveform,three_plus_one,LEFT,all,48,8,29,2.125459586,7.84265315,0.2439067906,0.6041666667
+change_2_waveform,three_plus_one,ABOVE-RIGHT,all,24,4,19,0.5458284374,7.017965825,5.24016846,0.7916666667
+change_2_waveform,three_plus_one,FRONT-ABOVE,all,24,4,20,1.74215919,9.525735747,0.8551518353,0.8333333333
+change_2_waveform,three_plus_one,ABOVE-LEFT,all,6,1,4,2.804527026,6.909879781,2.762945593,0.6666666667
+change_2_waveform,three_plus_one,RIGHT-BELOW,all,24,4,17,3.163690537,11.62841848,0.3340132691,0.7083333333
+change_2_waveform,three_plus_one,BELOW-LEFT,all,6,1,5,3.74904779,4.345061175,28.27453004,0.8333333333
+change_2_waveform,three_plus_one,LEFT-FRONT,all,6,1,3,0.4163263766,0.6920348266,0.08013771001,0.5
+change_2_waveform,three_plus_one,ABOVE,all,6,1,4,2.423060585,4.398582262,17.93873075,0.6666666667
+change_2_waveform,three_plus_one,BELOW-BACK,all,6,1,6,2.774584165,5.137565848,4.259682616,1
+change_2_waveform,three_plus_one,BELOW-RIGHT,all,6,1,4,1.951029701,4.17307529,22.23037531,0.6666666667
+change_2_waveform,three_plus_one,LEFT-ABOVE,noise-free,2,2,2,0.3838293449,0.6385209,0.05395321076,1
+change_2_waveform,three_plus_one,LEFT-BELOW,noise-free,3,3,3,0.287375257,1.853633313,0.07527883678,1
+change_2_waveform,three_plus_one,BELOW,noise-free,1,1,1,1.020299604,1.020299604,0.02656248255,1
+change_2_waveform,three_plus_one,FRONT-BELOW,noise-free,5,5,5,2.283365364,11.89691245,0.2890867405,1
+change_2_waveform,three_plus_one,RIGHT-ABOVE,noise-free,2,2,2,1.308369483,1.458721138,0.2169933153,1
+change_2_waveform,three_plus_one,BACK-BELOW,noise-free,4,4,4,1.033645549,1.785444195,0.06737336907,1
+change_2_waveform,three_plus_one,RIGHT-FRONT,noise-free,1,1,1,1.256569797,1.256569797,0.09586587651,1
+change_2_waveform,three_plus_one,FRONT-LEFT,noise-free,3,3,3,1.077066809,146.6378583,0.07354955815,1
+change_2_waveform,three_plus_one,BACK-ABOVE,noise-free,5,5,4,2.041254147,3.311084857,0.204630738,0.8
+change_2_waveform,three_plus_one,ABOVE-BACK,noise-free,3,3,3,0.6723238659,0.9268026704,0.141648784,1
+change_2_waveform,three_plus_one,ABOVE-FRONT,noise-free,3,3,3,0.9195937559,4.533551906,0.08624799148,1
+change_2_waveform,three_plus_one,FRONT-RIGHT,noise-free,1,1,1,0.05173406133,0.05173406133,0.1063135613,1
+change_2_waveform,three_plus_one,BACK-RIGHT,noise-free,3,3,3,0.8813800145,2.031014808,0.1089737029,1
+change_2_waveform,three_plus_one,RIGHT,noise-free,11,11,11,0.3827210067,10.39578576,0.06381749497,1
+change_2_waveform,three_plus_one,BACK,noise-free,8,8,8,0.1231430799,13.28286886,0.08544560571,1
+change_2_waveform,three_plus_one,FRONT,noise-free,12,12,12,0.4717725288,2.095758679,0.1016320349,1
+change_2_waveform,three_plus_one,RIGHT-BACK,noise-free,1,1,1,0.2653727259,0.2653727259,0.1010761639,1
+change_2_waveform,three_plus_one,BACK-LEFT,noise-free,2,2,2,7.373718317,13.46910704,0.1318847479,1
+change_2_waveform,three_plus_one,LEFT-BACK,noise-free,4,4,4,0.4899303487,1.010884258,0.05920850979,1
+change_2_waveform,three_plus_one,LEFT,noise-free,8,8,8,0.8366347822,34.88613818,0.1067149711,1
+change_2_waveform,three_plus_one,ABOVE-RIGHT,noise-free,4,4,4,0.3403150413,0.5208580231,0.06262127679,1
+change_2_waveform,three_plus_one,FRONT-ABOVE,noise-free,4,4,4,0.6425838646,2.233659263,0.1118416301,1
+change_2_waveform,three_plus_one,ABOVE-LEFT,noise-free,1,1,1,1.89026043,1.89026043,0.2985367248,1
+change_2_waveform,three_plus_one,RIGHT-BELOW,noise-free,4,4,4,1.038404046,6.155008763,0.1524203643,1
+change_2_waveform,three_plus_one,BELOW-LEFT,noise-free,1,1,1,0.1710844177,0.1710844177,0.02404750843,1
+change_2_waveform,three_plus_one,LEFT-FRONT,noise-free,1,1,1,0.4163263766,0.4163263766,0.08013771001,1
+change_2_waveform,three_plus_one,ABOVE,noise-free,1,1,1,1.148623344,1.148623344,0.03605891134,1
+change_2_waveform,three_plus_one,BELOW-BACK,noise-free,1,1,1,0.4571095647,0.4571095647,0.09226798651,1
+change_2_waveform,three_plus_one,BELOW-RIGHT,noise-free,1,1,1,0.274414012,0.274414012,0.04127770908,1
+change_2_waveform,three_plus_one,LEFT-ABOVE,30 dB,2,2,2,0.3838293449,0.6385209,0.05395321076,1
+change_2_waveform,three_plus_one,LEFT-BELOW,30 dB,3,3,3,0.287375257,1.853633313,0.07527883678,1
+change_2_waveform,three_plus_one,BELOW,30 dB,1,1,1,3.142570033,3.142570033,0.2934737088,1
+change_2_waveform,three_plus_one,FRONT-BELOW,30 dB,5,5,5,0.323522993,11.98819125,0.1014919934,1
+change_2_waveform,three_plus_one,RIGHT-ABOVE,30 dB,2,2,2,0.8890451985,1.41678871,0.170465168,1
+change_2_waveform,three_plus_one,BACK-BELOW,30 dB,4,4,4,1.033645549,1.785444195,0.06737336907,1
+change_2_waveform,three_plus_one,RIGHT-FRONT,30 dB,1,1,1,1.256569797,1.256569797,0.09586587651,1
+change_2_waveform,three_plus_one,FRONT-LEFT,30 dB,3,3,3,1.077066809,5.697901784,0.04392584252,1
+change_2_waveform,three_plus_one,BACK-ABOVE,30 dB,5,5,4,2.153952267,3.311084857,0.1841227063,0.8
+change_2_waveform,three_plus_one,ABOVE-BACK,30 dB,3,3,3,0.6723238659,0.9268026704,0.141648784,1
+change_2_waveform,three_plus_one,ABOVE-FRONT,30 dB,3,3,3,0.9195937559,4.533551906,0.08624799148,1
+change_2_waveform,three_plus_one,FRONT-RIGHT,30 dB,1,1,1,0.7618889788,0.7618889788,0.0185719161,1
+change_2_waveform,three_plus_one,BACK-RIGHT,30 dB,3,3,3,2.158752008,6.149074254,0.1089737029,1
+change_2_waveform,three_plus_one,RIGHT,30 dB,11,11,11,0.3827210067,10.39578576,0.07160501579,1
+change_2_waveform,three_plus_one,BACK,30 dB,8,8,8,0.1508460639,13.28286886,0.05245637598,1
+change_2_waveform,three_plus_one,FRONT,30 dB,12,12,12,0.4717725288,2.095758679,0.1230340248,1
+change_2_waveform,three_plus_one,RIGHT-BACK,30 dB,1,1,1,0.7115114224,0.7115114224,0.005404480652,1
+change_2_waveform,three_plus_one,BACK-LEFT,30 dB,2,2,2,7.373718317,13.46910704,0.1318847479,1
+change_2_waveform,three_plus_one,LEFT-BACK,30 dB,4,4,4,0.4339531818,1.010884258,0.06130321027,1
+change_2_waveform,three_plus_one,LEFT,30 dB,8,8,8,1.029439587,4.56335665,0.1067149711,1
+change_2_waveform,three_plus_one,ABOVE-RIGHT,30 dB,4,4,4,0.3403150413,0.5208580231,0.06262127679,1
+change_2_waveform,three_plus_one,FRONT-ABOVE,30 dB,4,4,4,1.05152459,3.898101331,0.1762749503,1
+change_2_waveform,three_plus_one,ABOVE-LEFT,30 dB,1,1,1,1.89026043,1.89026043,0.2985367248,1
+change_2_waveform,three_plus_one,RIGHT-BELOW,30 dB,4,4,4,1.859069724,7.248612739,0.1484563526,1
+change_2_waveform,three_plus_one,BELOW-LEFT,30 dB,1,1,1,1.050631496,1.050631496,0.02270723336,1
+change_2_waveform,three_plus_one,LEFT-FRONT,30 dB,1,1,1,0.4163263766,0.4163263766,0.08013771001,1
+change_2_waveform,three_plus_one,ABOVE,30 dB,1,1,1,1.148623344,1.148623344,0.03605891134,1
+change_2_waveform,three_plus_one,BELOW-BACK,30 dB,1,1,1,0.5004985045,0.5004985045,0.03691248613,1
+change_2_waveform,three_plus_one,BELOW-RIGHT,30 dB,1,1,1,0.274414012,0.274414012,0.04127770908,1
+change_2_waveform,three_plus_one,LEFT-ABOVE,20 dB,2,2,2,5.065599715,6.514320027,11.90616471,1
+change_2_waveform,three_plus_one,LEFT-BELOW,20 dB,3,3,3,1.858744709,2.466770544,0.8094694682,1
+change_2_waveform,three_plus_one,BELOW,20 dB,1,1,1,3.666782209,3.666782209,0.3061165613,1
+change_2_waveform,three_plus_one,FRONT-BELOW,20 dB,5,5,5,3.21735416,14.17611318,1.904205326,1
+change_2_waveform,three_plus_one,RIGHT-ABOVE,20 dB,2,2,2,1.835636121,3.066384296,0.1475025152,1
+change_2_waveform,three_plus_one,BACK-BELOW,20 dB,4,4,3,2.206328535,3.799017045,7.818198377,0.75
+change_2_waveform,three_plus_one,RIGHT-FRONT,20 dB,1,1,1,0.1387991072,0.1387991072,0.05182758388,1
+change_2_waveform,three_plus_one,FRONT-LEFT,20 dB,3,3,3,1.077066809,146.6378583,0.04392584252,1
+change_2_waveform,three_plus_one,BACK-ABOVE,20 dB,5,5,5,3.410341483,112.1596,0.1291004924,1
+change_2_waveform,three_plus_one,ABOVE-BACK,20 dB,3,3,3,2.760351745,3.587271628,3.088230505,1
+change_2_waveform,three_plus_one,ABOVE-FRONT,20 dB,3,3,3,0.9195937559,6.029006829,0.08624799148,1
+change_2_waveform,three_plus_one,FRONT-RIGHT,20 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,BACK-RIGHT,20 dB,3,3,3,5.01696099,6.434895152,0.7036602864,1
+change_2_waveform,three_plus_one,RIGHT,20 dB,11,11,9,0.8774296057,5.688819014,0.2212389569,0.8181818182
+change_2_waveform,three_plus_one,BACK,20 dB,8,8,5,5.572708174,6.779842545,0.1623067309,0.625
+change_2_waveform,three_plus_one,FRONT,20 dB,12,12,7,0.966009162,5.576892788,0.08607293617,0.5833333333
+change_2_waveform,three_plus_one,RIGHT-BACK,20 dB,1,1,1,0.9811612876,0.9811612876,0.09178340132,1
+change_2_waveform,three_plus_one,BACK-LEFT,20 dB,2,2,1,2.462388659,2.462388659,6.941901811,0.5
+change_2_waveform,three_plus_one,LEFT-BACK,20 dB,4,4,4,0.4339531818,1.010884258,0.06130321027,1
+change_2_waveform,three_plus_one,LEFT,20 dB,8,8,4,0.8119790183,6.149547312,0.2021841673,0.5
+change_2_waveform,three_plus_one,ABOVE-RIGHT,20 dB,4,4,4,1.141445878,5.636752554,8.767399061,1
+change_2_waveform,three_plus_one,FRONT-ABOVE,20 dB,4,4,4,3.264349002,6.673996096,0.6577946824,1
+change_2_waveform,three_plus_one,ABOVE-LEFT,20 dB,1,1,1,3.718793622,3.718793622,5.227354462,1
+change_2_waveform,three_plus_one,RIGHT-BELOW,20 dB,4,4,4,3.422053303,7.55274879,5.303381286,1
+change_2_waveform,three_plus_one,BELOW-LEFT,20 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,LEFT-FRONT,20 dB,1,1,1,0.7226690988,0.7226690988,0.1015274897,1
+change_2_waveform,three_plus_one,ABOVE,20 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,BELOW-BACK,20 dB,1,1,1,0.5004985045,0.5004985045,0.03691248613,1
+change_2_waveform,three_plus_one,BELOW-RIGHT,20 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,LEFT-ABOVE,10 dB,2,2,1,3.648608022,3.648608022,15.60015903,0.5
+change_2_waveform,three_plus_one,LEFT-BELOW,10 dB,3,3,2,3.08927923,3.41262732,19.57170823,0.6666666667
+change_2_waveform,three_plus_one,BELOW,10 dB,1,1,1,7.266031633,7.266031633,18.73182956,1
+change_2_waveform,three_plus_one,FRONT-BELOW,10 dB,5,5,4,2.924307775,5.595153682,16.18645571,0.8
+change_2_waveform,three_plus_one,RIGHT-ABOVE,10 dB,2,2,2,3.990586423,5.508925287,25.44976632,1
+change_2_waveform,three_plus_one,BACK-BELOW,10 dB,4,4,2,3.5104864,4.058830713,16.08890375,0.5
+change_2_waveform,three_plus_one,RIGHT-FRONT,10 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,FRONT-LEFT,10 dB,3,3,2,4.646020327,7.344439443,32.98924575,0.6666666667
+change_2_waveform,three_plus_one,BACK-ABOVE,10 dB,5,5,1,2.586171952,2.586171952,6.89676498,0.2
+change_2_waveform,three_plus_one,ABOVE-BACK,10 dB,3,3,3,2.852445073,3.59028342,23.28703765,1
+change_2_waveform,three_plus_one,ABOVE-FRONT,10 dB,3,3,2,4.573418713,4.968093553,15.77838544,0.6666666667
+change_2_waveform,three_plus_one,FRONT-RIGHT,10 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,BACK-RIGHT,10 dB,3,3,3,5.503240463,6.662759981,13.50552068,1
+change_2_waveform,three_plus_one,RIGHT,10 dB,11,11,7,4.869351963,14.65765197,13.9821629,0.6363636364
+change_2_waveform,three_plus_one,BACK,10 dB,8,8,5,3.613216483,6.004177804,18.97605461,0.625
+change_2_waveform,three_plus_one,FRONT,10 dB,12,12,5,6.366229847,7.035925961,14.66548678,0.4166666667
+change_2_waveform,three_plus_one,RIGHT-BACK,10 dB,1,1,1,6.838461438,6.838461438,19.10545268,1
+change_2_waveform,three_plus_one,BACK-LEFT,10 dB,2,2,2,4.622813219,6.68969704,35.9719331,1
+change_2_waveform,three_plus_one,LEFT-BACK,10 dB,4,4,2,4.462865896,6.549206155,18.8529122,0.5
+change_2_waveform,three_plus_one,LEFT,10 dB,8,8,1,3.464367934,3.464367934,31.14186867,0.125
+change_2_waveform,three_plus_one,ABOVE-RIGHT,10 dB,4,4,2,4.300846176,6.118890815,9.22857241,0.5
+change_2_waveform,three_plus_one,FRONT-ABOVE,10 dB,4,4,2,4.350251531,6.985836832,36.47612053,0.5
+change_2_waveform,three_plus_one,ABOVE-LEFT,10 dB,1,1,1,7.473012632,7.473012632,16.92213397,1
+change_2_waveform,three_plus_one,RIGHT-BELOW,10 dB,4,4,2,2.918536881,4.525625308,11.72829331,0.5
+change_2_waveform,three_plus_one,BELOW-LEFT,10 dB,1,1,1,3.74904779,3.74904779,28.27453004,1
+change_2_waveform,three_plus_one,LEFT-FRONT,10 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,ABOVE,10 dB,1,1,1,3.697497826,3.697497826,35.8414026,1
+change_2_waveform,three_plus_one,BELOW-BACK,10 dB,1,1,1,5.108822716,5.108822716,8.427097245,1
+change_2_waveform,three_plus_one,BELOW-RIGHT,10 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,LEFT-ABOVE,5 dB,2,2,1,4.294629414,4.294629414,86.68398562,0.5
+change_2_waveform,three_plus_one,LEFT-BELOW,5 dB,3,3,2,3.233622553,3.635636901,108.0095931,0.6666666667
+change_2_waveform,three_plus_one,BELOW,5 dB,1,1,1,7.733159957,7.733159957,49.23043401,1
+change_2_waveform,three_plus_one,FRONT-BELOW,5 dB,5,5,3,4.510900309,6.501675384,45.11853164,0.6
+change_2_waveform,three_plus_one,RIGHT-ABOVE,5 dB,2,2,2,3.455991323,5.454073947,26.7125376,1
+change_2_waveform,three_plus_one,BACK-BELOW,5 dB,4,4,2,4.839760593,5.485887389,19.97672438,0.5
+change_2_waveform,three_plus_one,RIGHT-FRONT,5 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,FRONT-LEFT,5 dB,3,3,1,1.627508873,1.627508873,24.90050454,0.3333333333
+change_2_waveform,three_plus_one,BACK-ABOVE,5 dB,5,5,3,4.674881375,7.120007815,50.06847889,0.6
+change_2_waveform,three_plus_one,ABOVE-BACK,5 dB,3,3,3,2.639118215,3.567295802,29.59214581,1
+change_2_waveform,three_plus_one,ABOVE-FRONT,5 dB,3,3,3,4.133403098,5.9194598,32.00240988,1
+change_2_waveform,three_plus_one,FRONT-RIGHT,5 dB,1,1,1,7.837467828,7.837467828,90.2705635,1
+change_2_waveform,three_plus_one,BACK-RIGHT,5 dB,3,3,2,4.1825065,5.683247372,15.90462008,0.6666666667
+change_2_waveform,three_plus_one,RIGHT,5 dB,11,11,8,4.898891531,16.36432777,49.4772262,0.7272727273
+change_2_waveform,three_plus_one,BACK,5 dB,8,8,5,3.291568991,6.399337855,38.74323883,0.625
+change_2_waveform,three_plus_one,FRONT,5 dB,12,12,7,4.936578539,6.935336372,37.1265461,0.5833333333
+change_2_waveform,three_plus_one,RIGHT-BACK,5 dB,1,1,1,6.939205729,6.939205729,44.14697083,1
+change_2_waveform,three_plus_one,BACK-LEFT,5 dB,2,2,1,2.855585642,2.855585642,39.26721991,0.5
+change_2_waveform,three_plus_one,LEFT-BACK,5 dB,4,4,3,4.504754152,6.245634143,34.54235141,0.75
+change_2_waveform,three_plus_one,LEFT,5 dB,8,8,2,7.698858835,7.804450189,99.61168805,0.25
+change_2_waveform,three_plus_one,ABOVE-RIGHT,5 dB,4,4,3,2.847734181,6.614405384,81.7399361,0.75
+change_2_waveform,three_plus_one,FRONT-ABOVE,5 dB,4,4,3,2.062494959,6.757051082,40.55448648,0.75
+change_2_waveform,three_plus_one,ABOVE-LEFT,5 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,RIGHT-BELOW,5 dB,4,4,2,15.49826143,25.18757641,59.2087432,0.5
+change_2_waveform,three_plus_one,BELOW-LEFT,5 dB,1,1,1,3.753231458,3.753231458,28.45828034,1
+change_2_waveform,three_plus_one,LEFT-FRONT,5 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,ABOVE,5 dB,1,1,1,4.522303045,4.522303045,37.1446109,1
+change_2_waveform,three_plus_one,BELOW-BACK,5 dB,1,1,1,5.048669825,5.048669825,14.1061776,1
+change_2_waveform,three_plus_one,BELOW-RIGHT,5 dB,1,1,1,3.627645389,3.627645389,44.41947292,1
+change_2_waveform,three_plus_one,LEFT-ABOVE,0 dB,2,2,1,3.728086922,3.728086922,42.10405403,0.5
+change_2_waveform,three_plus_one,LEFT-BELOW,0 dB,3,3,2,3.477920507,4.16205869,91.73659845,0.6666666667
+change_2_waveform,three_plus_one,BELOW,0 dB,1,1,1,7.748906943,7.748906943,37.77110712,1
+change_2_waveform,three_plus_one,FRONT-BELOW,0 dB,5,5,5,3.451790079,6.605843312,81.45387752,1
+change_2_waveform,three_plus_one,RIGHT-ABOVE,0 dB,2,2,1,2.634032245,2.634032245,52.97838932,0.5
+change_2_waveform,three_plus_one,BACK-BELOW,0 dB,4,4,2,4.980508753,5.64999897,74.71746125,0.5
+change_2_waveform,three_plus_one,RIGHT-FRONT,0 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,FRONT-LEFT,0 dB,3,3,0,,,,0
+change_2_waveform,three_plus_one,BACK-ABOVE,0 dB,5,5,3,6.0555147,48.17454254,50.97305734,0.6
+change_2_waveform,three_plus_one,ABOVE-BACK,0 dB,3,3,3,2.868962692,4.022152746,57.10163568,1
+change_2_waveform,three_plus_one,ABOVE-FRONT,0 dB,3,3,0,,,,0
+change_2_waveform,three_plus_one,FRONT-RIGHT,0 dB,1,1,1,7.82250775,7.82250775,86.22347924,1
+change_2_waveform,three_plus_one,BACK-RIGHT,0 dB,3,3,1,5.942258919,5.942258919,38.33470711,0.3333333333
+change_2_waveform,three_plus_one,RIGHT,0 dB,11,11,7,5.255939567,9.970193213,68.74267093,0.6363636364
+change_2_waveform,three_plus_one,BACK,0 dB,8,8,4,5.077592798,6.874483526,71.2263935,0.5
+change_2_waveform,three_plus_one,FRONT,0 dB,12,12,8,5.007240616,6.868737046,70.39610881,0.6666666667
+change_2_waveform,three_plus_one,RIGHT-BACK,0 dB,1,1,1,8.949976457,8.949976457,133.5778778,1
+change_2_waveform,three_plus_one,BACK-LEFT,0 dB,2,2,1,6.955058149,6.955058149,70.51875917,0.5
+change_2_waveform,three_plus_one,LEFT-BACK,0 dB,4,4,2,3.147751415,3.473467986,62.30913838,0.5
+change_2_waveform,three_plus_one,LEFT,0 dB,8,8,6,7.059282903,7.790828094,116.0630566,0.75
+change_2_waveform,three_plus_one,ABOVE-RIGHT,0 dB,4,4,2,4.940239183,6.808697302,112.2088653,0.5
+change_2_waveform,three_plus_one,FRONT-ABOVE,0 dB,4,4,3,7.279220918,47.71648785,69.42341297,0.75
+change_2_waveform,three_plus_one,ABOVE-LEFT,0 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,RIGHT-BELOW,0 dB,4,4,1,5.564529639,5.564529639,26.26292969,0.25
+change_2_waveform,three_plus_one,BELOW-LEFT,0 dB,1,1,1,4.493018604,4.493018604,86.49128493,1
+change_2_waveform,three_plus_one,LEFT-FRONT,0 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,ABOVE,0 dB,1,1,0,,,,0
+change_2_waveform,three_plus_one,BELOW-BACK,0 dB,1,1,1,5.147146892,5.147146892,29.50442201,1
+change_2_waveform,three_plus_one,BELOW-RIGHT,0 dB,1,1,1,4.269327626,4.269327626,114.8913316,1

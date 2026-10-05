@@ -1,0 +1,31 @@
+{
+  "label": "SIMULATION",
+  "geometry": "tetrahedral",
+  "sample_rate_hz": 256000.0,
+  "carrier_frequency_hz": 40000.0,
+  "pulse_duration_s": 0.004,
+  "apply_attenuation": false,
+  "n_trials": 100,
+  "n_frequency_trials": 25,
+  "comparison_frequencies_hz": [
+    25000.0,
+    30000.0,
+    35000.0,
+    40000.0
+  ],
+  "snr_levels_db": [
+    30.0,
+    20.0,
+    10.0,
+    5.0,
+    0.0
+  ],
+  "include_noise_free": true,
+  "random_seed": 20261004,
+  "source_table": "simulations\\geometry_study\\results\\source_positions.csv",
+  "n_rows": 600,
+  "n_frequency_rows": 200,
+  "elapsed_s": 20.285,
+  "tdoa_method": "GCC-PHAT, existing src.tdoa.estimate_tdoas, search limited to baseline/c",
+  "fractional_delay": "linear interpolation in src.simulation.delay_signal"
+}
