@@ -9,7 +9,7 @@ There are two different tests:
 | Electrical bench | D9 frequency, D8 burst length, repetition, idle levels | Sound in water, source level, range |
 | Underwater acoustic | A real projector, heard by a receive hydrophone | Not part of this firmware bring-up |
 
-Keep the transducer and any power amplifier disconnected for the electrical section. `TEST` on the serial port prints the same warning. Compiling with `#define TEST_MODE 1` adds a boot warning and does not change the pins.
+Keep the transducer and any power amplifier disconnected for the electrical section. That is a bench procedure, not something the firmware enforces. `TEST` only prints notes. `#define TEST_MODE 1` only adds a boot warning. `START` still drives D8 and D9 in either setting, and neither one disables an amplifier.
 
 ## Equipment
 
@@ -118,9 +118,11 @@ Jitter:
 2. Record the spread of the next D8 rising edge around 1000 ms.
 3. Repeat while the monitor is printing. Send `STATUS` every few seconds. The period may stretch by the print time. Record that separately from the quiet result.
 
-Pass criterion: quiet-serial jitter is small compared with the 500 ms minimum period (a few milliseconds would be worth investigating; tens of microseconds is the expected loop slack). There is no numeric pass limit until the first real capture sets a baseline. Do not invent one.
+Pass criterion: quiet-serial jitter is small compared with the 500 ms minimum period (a few milliseconds would be worth investigating; tens of microseconds is the expected loop slack). While a status or help reply is printing, the burst may run long by about one serial line. There is no numeric pass limit until the first real capture sets a baseline. Do not invent one.
 
-`micros()` wrap is about 71.6 minutes. A functional check is optional and long: run `START` for longer than 72 minutes and confirm bursts continue. Unsigned subtraction is what the sketch relies on. Do not report that as done unless the board actually ran that long.
+Host logic tests (`arduino_pinger/test_pinger_logic.cpp`, summarized in `HOST_VERIFICATION.md`) check frequency rounding, rejected commands, and a mocked `uint32_t` clock. They do not exercise Timer1 or the pins. A passing host test is not a scope result.
+
+`micros()` wrap is about 71.6 minutes. The host suite checks the unsigned subtraction with synthetic timestamps. That does not replace a board run: `START` for longer than 72 minutes, with bursts still continuing, is still unmeasured. Do not report the board run as done unless the Uno actually ran that long.
 
 ## Evidence to keep
 

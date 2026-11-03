@@ -274,7 +274,7 @@ and leave the original noise-study and waveform-study files in place.
 1. Review the geometry simulation with the professor and choose buildable candidates
 2. Add hydrophone-coordinate error and sound-speed error in simulation
 3. If a planar array remains of interest, test an explicitly labeled half-space assumption as a separate case
-4. Replace the simulator with recorded 4-channel captures when hardware exists
+4. Replace the simulator with recorded 4-channel captures when hardware exists. The laptop-side MSOX2014A reader is `acquisition/README.md`. It has not been run on the scope. `simulations/scope_validation/` runs synthetic records through that same record layout and the existing localizer; see `results_scope_validation/summary.md`
 5. Only then: hardware acquisition, Jetson/ROS integration, and realtime constraints
 
 Every meaningful code change is recorded in [CHANGELOG.md](CHANGELOG.md).

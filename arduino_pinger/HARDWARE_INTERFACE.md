@@ -1,6 +1,6 @@
 # Pinger hardware interface
 
-This document is the boundary between the Arduino sketch and a transmitter that has not been designed yet. Every transducer and driver parameter below is **TBD** unless it is a property of the Arduino pin itself.
+This document is the boundary between the Arduino sketch and a transmitter that has not been designed yet. Every transducer and driver parameter below is **TBD** unless it is a property of the Arduino pin itself. System requirements, sequencing, and the selection gate are expanded in `PINGER_HARDWARE_REQUIREMENTS.md`, `PINGER_INTERFACE.md`, and `PINGER_VALIDATION_CHECKLIST.md`.
 
 The sketch was not connected to hardware when it was written.
 
@@ -55,7 +55,7 @@ Until those rows are filled, the only safe electrical load on D9 is a scope prob
 - Power the Arduino from USB for firmware and bench probing only.
 - The acoustic power supply is **TBD**. Do not plan to run the projector from the Arduino 5 V pin or from the USB port.
 - Share a logic ground between Arduino GND and the driver input reference only if the driver datasheet says the input is ground-referenced. Isolation between that logic ground, the projector supply, and the vehicle hull is **TBD**.
-- During reset and while the bootloader runs, D8 and D9 float. Before a driver is connected, fit pull-downs from D8 to GND and from D9 to GND so a floating pin cannot enable the amplifier. Resistor value is **TBD** (a starting point to check against the driver input spec is 10 kΩ; do not treat that as a final design).
+- During reset, brown-out, and the bootloader, D8 and D9 are high-Z. `outputIdle()` has not run yet, and no firmware flag, including `TEST_MODE`, can hold the driver off. The fail-safe has to be hardware: a pull-down from D8 to GND so an open enable is disabled, and a driver that treats low or open as off. A pull-down on D9 keeps the carrier input from floating as well. Resistor value is **TBD** (10 kΩ is only a placeholder to check against the driver input spec).
 - Series protection, TVS diodes, current limit, and DC blocking between the amplifier and the transducer are **TBD**.
 - Do not connect the pinger and the receiver grounds together in the water without a written grounding plan. That plan is **TBD**.
 

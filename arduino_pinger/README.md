@@ -4,6 +4,8 @@ Logic-level burst controller for a future underwater acoustic pinger. It runs on
 
 An Arduino pin cannot power an underwater transducer. D9 must feed an external driver or power amplifier that has not been selected. This sketch is not a Python acoustic simulator and it is not receiver firmware.
 
+Transmitter requirements, the D8/D9 interface, and the transducer selection checklist are in `PINGER_HARDWARE_REQUIREMENTS.md`, `PINGER_INTERFACE.md`, and `PINGER_VALIDATION_CHECKLIST.md`. Those notes do not select a transducer or an amplifier.
+
 No hardware was exercised to produce this folder. Compile and scope checks below are procedures, not recorded results.
 
 ## Compatibility
@@ -27,7 +29,7 @@ Do not upload this sketch to an Uno-shaped board with a different chip, a Mega, 
 | D8 | PB0 | HIGH for the burst (active-high enable assumption) | Driven LOW |
 | GND | GND | Logic reference for the driver input | Same |
 
-Until `setup()` runs, including during the Uno bootloader, D8 and D9 are inputs and can float. Put external pull-downs on both wires before they reach a real driver. Details are in `HARDWARE_INTERFACE.md`.
+From reset until `setup()` runs, including the Uno bootloader, D8 and D9 are high-impedance inputs. Firmware cannot pull them low in that window. Before a driver is connected, D8 needs a hardware pull-down so an open pin cannot enable the amplifier. Details are in `HARDWARE_INTERFACE.md`.
 
 D8 high-during-burst matches the requirement that enable is LOW when idle. If the chosen driver is active-low, or wants 3.3 V logic, do not connect it until the firmware polarity and level are changed. That driver does not exist yet.
 
@@ -37,11 +39,11 @@ D8 high-during-burst matches the requirement that enable is LOW when idle. If th
 2. Open `arduino_pinger/robosub_pinger/robosub_pinger.ino`.
 3. Tools → Board → Arduino Uno. A classic Nano with the ATmega328P uses Tools → Board → Arduino Nano and Tools → Processor → ATmega328P. The old Nano bootloader is a separate Tools → Processor choice if a new upload fails to start.
 4. Tools → Port → the board's serial port.
-5. Optional bench warning: in the sketch, set `#define TEST_MODE 1`, then upload again. Electrical behavior does not change. The boot message tells you to keep the transducer and amplifier disconnected.
+5. Optional boot warning: in the sketch, set `#define TEST_MODE 1`, then upload again. This flag only changes the boot text. `START` still drives D8 and D9. It does not mute the pins and it does not disable an amplifier.
 6. Sketch → Upload.
 7. Tools → Serial Monitor. Set 115200 baud and a newline ending (New Line or Both NL & CR).
 
-`arduino-cli` was not installed on the machine that added this sketch, so it was not compiled here. After installing the CLI and the AVR core:
+The sketch was compiled for `arduino:avr:uno` with Arduino CLI 1.4.1 and the `arduino:avr` 1.8.8 core. That was a build check only. It did not program a board, and the firmware has not been run on hardware. Arduino IDE 2 keeps `arduino-cli` inside the IDE install, so it may be absent from `PATH`. From a shell where the CLI is available:
 
 ```bash
 arduino-cli core update-index
@@ -88,7 +90,7 @@ TEST
 
 `FREQ`, `PERIOD`, and `PULSE` can be sent while the pinger is running. A new carrier is loaded on the next burst, not in the middle of the current one. Period and pulse update the scheduler immediately. The sketch rejects a pulse that is longer than or equal to the period, values outside the ranges above, unknown commands, and junk after a number.
 
-`START` while already running is rejected so the burst is not restarted by accident. `STOP` forces D9 and D8 LOW and is safe to send more than once.
+`START` while already running is rejected so the burst is not restarted by accident. `STOP` forces D9 and D8 LOW before it prints `OK`, and it is safe to send more than once. If a reply is already printing, `STOP` is applied between lines, so the extra wait is one serial line (a few milliseconds at 115200), not the whole reply. A command typed ahead of that `STOP` is kept and run afterward. A burst can also run long by that same one-line transmit time, because the end check runs between lines and once per `loop()`, not inside the UART shift register.
 
 `TEST` only prints bench-probe notes. It does not start the carrier.
 
@@ -102,7 +104,8 @@ Stopping the timer freezes OC1A at whatever level it had. The stop path therefor
 
 - No transducer, power amplifier, matching network, or wet connector is specified.
 - USB 5 V cannot be the acoustic power source.
-- Burst timing uses `micros()` in the main loop, not a second hardware timer. A long serial print can delay the next edge by the print duration. Expect on the order of tens of microseconds of jitter when the serial port is quiet, and more while a line is being printed.
+- Burst timing uses `micros()` in the main loop. Timer1 stays dedicated to the carrier. With a quiet serial port, edge jitter is the loop time, typically tens of microseconds. While a line is printing, a burst can run long by that line's transmit time.
 - A 1 ms burst is within `micros()` resolution, but the last cycle is cut when the burst ends, so the edge count is not a perfect 50% symbol over the whole burst.
-- The Uno bootloader leaves D8 and D9 floating until this sketch starts. External pull-downs are required before a driver is attached.
+- The Uno bootloader leaves D8 and D9 high-Z until this sketch starts. A pull-down on D8 is a required hardware fail-safe before a driver is attached. `TEST_MODE` does not replace it.
+- Host checks, not hardware tests: `powershell -ExecutionPolicy Bypass -File arduino_pinger\run_host_verification.ps1` from the repository root. It reruns `test_pinger_logic.cpp` and, when Arduino CLI is available, compiles the sketch for Uno. The written result is `arduino_pinger/HOST_VERIFICATION.md`. That file is not a scope or acoustic measurement. The test source sits outside the sketch folder so the Arduino IDE does not upload it.
 - This folder does not change the localization simulations, CAD, or experiment results.

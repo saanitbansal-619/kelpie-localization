@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-11-01 — acquisition records into the existing localizer
+
+### Added
+
+* `simulations/scope_validation/`: `FourChannelRecord` waveforms through the existing bandpass, GCC-PHAT, and `localize_from_tdoa` path, using the stated 3+1 coordinates
+* `results_scope_validation/` for the synthetic grid, plots, and `summary.md`
+* `tests/test_scope_localization.py`
+
+### Preserved
+
+* Firmware, CAD, acquisition hardware notes, and earlier result folders. No oscilloscope or in-water measurement was made
+
+## 2026-11-01 — MSOX2014A acquisition module
+
+### Added
+
+* `acquisition/`: PyVISA capture for a Keysight MSOX2014A, one `:DIGitize` of CH1..CH4, BYTE waveform scaling from publication 9018-06893, an in-memory mock, and `python -m acquisition.cli`
+* `tests/test_msox_acquisition.py` and `acquisition/HARDWARE_VALIDATION.md`
+* `pyvisa` in `requirements.txt`. The mock path does not open a VISA resource
+
+### Preserved
+
+* Firmware, CAD, simulations, and result folders. No oscilloscope was connected
+
 ## 2026-10-05 — joint H4 height and base scale
 
 ### Added

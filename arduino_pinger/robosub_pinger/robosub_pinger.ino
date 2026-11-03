@@ -18,8 +18,10 @@
   digitalWrite() calls turnOffPWM() and clears COM1A, which would kill
   the carrier.
 
-  Set TEST_MODE to 1 before a bench-scope session with no transducer and
-  no power amplifier connected. The pins behave the same either way.
+  TEST_MODE only adds a serial warning. It does not mute D8 or D9, does
+  not block START, and does not disable an external amplifier. From reset
+  until setup() runs, both pins are high-Z. A pull-down on D8 is required
+  hardware; this sketch cannot hold the driver off during that window.
 */
 
 #if F_CPU != 16000000L
@@ -27,65 +29,48 @@
 #endif
 
 #include <Arduino.h>
-#include <stdlib.h>
 #include <string.h>
+
+#include "pinger_logic.h"
 
 #define TEST_MODE 0
 
 static const uint32_t SERIAL_BAUD = 115200UL;
-static const uint16_t FREQ_MIN_HZ = 25000;
-static const uint16_t FREQ_MAX_HZ = 40000;
-static const uint16_t FREQ_STEP_HZ = 500;
-static const uint16_t FREQ_DEFAULT_HZ = 30000;
-static const uint16_t PERIOD_MIN_MS = 500;
-static const uint16_t PERIOD_MAX_MS = 2000;
-static const uint16_t PERIOD_DEFAULT_MS = 1000;
-static const uint16_t PULSE_MIN_MS = 1;
-static const uint16_t PULSE_MAX_MS = 100;
-static const uint16_t PULSE_DEFAULT_MS = 10;
 static const uint8_t LINE_MAX = 48;
 
-static const uint8_t PIN_ENABLE = 8;    // PB0
-static const uint8_t PIN_CARRIER = 9;   // PB1 / OC1A
+static const uint8_t PIN_ENABLE = 8;   // PB0
+static const uint8_t PIN_CARRIER = 9;  // PB1 / OC1A
 
-static uint16_t g_freq_hz = FREQ_DEFAULT_HZ;
-static uint16_t g_period_ms = PERIOD_DEFAULT_MS;
-static uint16_t g_pulse_ms = PULSE_DEFAULT_MS;
-static uint32_t g_period_us = (uint32_t)PERIOD_DEFAULT_MS * 1000UL;
-static uint32_t g_pulse_us = (uint32_t)PULSE_DEFAULT_MS * 1000UL;
-
-static bool g_running = false;
+static PingerSettings g_settings;
 static bool g_in_burst = false;
-static uint16_t g_burst_freq_hz = FREQ_DEFAULT_HZ;
-static uint16_t g_loaded_ocr = 0;
+static uint16_t g_burst_freq_hz = PINGER_FREQ_DEFAULT_HZ;
 static uint32_t g_cycle_start_us = 0;
 static uint32_t g_burst_start_us = 0;
 
-static char g_line[LINE_MAX];
-static uint8_t g_line_len = 0;
-static bool g_line_overflow = false;
+static char g_rx[LINE_MAX];
+static uint8_t g_rx_len = 0;
+static bool g_rx_overflow = false;
+static char g_pending[LINE_MAX];
+static bool g_pending_ready = false;
+static bool g_pending_overflow = false;
+static char g_stashed[LINE_MAX];
+static bool g_stashed_ready = false;
+static bool g_stashed_overflow = false;
+static bool g_in_handler = false;
 
-// Nearest divider for f = F_CPU / (2 * ticks), ticks = OCR1A + 1.
-// (F_CPU + f) / (2 * f) is floor(F_CPU / (2 * f) + 1/2), so halves round up.
-static uint16_t ocrForFrequency(uint16_t freq_hz) {
-  uint32_t ticks = (F_CPU + (uint32_t)freq_hz) / (2UL * (uint32_t)freq_hz);
-  if (ticks < 1UL) {
-    ticks = 1UL;
-  }
-  return (uint16_t)(ticks - 1UL);
+static uint32_t periodUs() {
+  return (uint32_t)g_settings.period_ms * 1000UL;
 }
 
-static void actualFrequency(uint16_t ocr, uint32_t &hz, uint8_t &hundredths) {
-  uint32_t den = 2UL * ((uint32_t)ocr + 1UL);
-  hz = F_CPU / den;
-  hundredths = (uint8_t)(((F_CPU % den) * 100UL) / den);
+static uint32_t pulseUs() {
+  return (uint32_t)g_settings.pulse_ms * 1000UL;
 }
 
 static void printHz(uint16_t freq_hz) {
-  uint16_t ocr = ocrForFrequency(freq_hz);
+  uint16_t ocr = pingerOcrForFrequency(F_CPU, freq_hz);
   uint32_t hz = 0;
   uint8_t frac = 0;
-  actualFrequency(ocr, hz, frac);
+  pingerActualFrequency(F_CPU, ocr, &hz, &frac);
   Serial.print(hz);
   Serial.print('.');
   if (frac < 10) {
@@ -114,9 +99,8 @@ static void outputIdle() {
 }
 
 static void burstBegin() {
-  uint16_t ocr = ocrForFrequency(g_freq_hz);
-  g_loaded_ocr = ocr;
-  g_burst_freq_hz = g_freq_hz;
+  uint16_t ocr = pingerOcrForFrequency(F_CPU, g_settings.freq_hz);
+  g_burst_freq_hz = g_settings.freq_hz;
 
   uint8_t old_sreg = SREG;
   cli();
@@ -137,276 +121,327 @@ static void burstBegin() {
 }
 
 static void servicePinger() {
-  if (!g_running) {
+  if (!g_settings.running) {
     return;
   }
 
-  // Unsigned subtraction is valid across the micros() wrap (~71.6 min)
-  // as long as the true gap is shorter than 2^32 µs. These gaps are <= 2 s
-  // and the timestamps are refreshed every cycle.
-  uint32_t now = micros();
-  if (g_in_burst) {
-    if ((uint32_t)(now - g_burst_start_us) >= g_pulse_us) {
-      outputIdle();
-    }
-    return;
-  }
-  if ((uint32_t)(now - g_cycle_start_us) >= g_period_us) {
+  PingerScheduleAction action = pingerSchedule(true, g_in_burst, micros(), g_burst_start_us,
+                                               g_cycle_start_us, pulseUs(), periodUs());
+  if (action == PINGER_SCHED_END_BURST) {
+    outputIdle();
+  } else if (action == PINGER_SCHED_BEGIN_BURST) {
     burstBegin();
     g_cycle_start_us = g_burst_start_us;
   }
 }
 
+// Called between serial lines so a burst can end during a multi-line reply.
+// One Serial.println can still stretch the burst by that line's TX time
+// (a few milliseconds at 115200). STOP itself is applied in outputIdle()
+// before its own "OK" text is printed, but only after the line is parsed.
+static void absorbSerial();
+
+static void replyLine(const __FlashStringHelper *message) {
+  servicePinger();
+  Serial.println(message);
+  servicePinger();
+  // Pick up a STOP that arrived while this line was shifting out.
+  absorbSerial();
+}
+
 static void printHelp() {
-  Serial.println(F("Commands:"));
-  Serial.println(F("  HELP"));
-  Serial.println(F("  STATUS"));
-  Serial.println(F("  FREQ <Hz>     25000 to 40000, steps of 500"));
-  Serial.println(F("  PERIOD <ms>   500 to 2000"));
-  Serial.println(F("  PULSE <ms>    1 to 100, must be < PERIOD"));
-  Serial.println(F("  START"));
-  Serial.println(F("  STOP"));
-  Serial.println(F("  TEST          bench-scope notes, does not start output"));
-  Serial.println(F("D9 is a logic square wave for an external driver, not a transducer."));
+  replyLine(F("Commands:"));
+  replyLine(F("  HELP"));
+  replyLine(F("  STATUS"));
+  replyLine(F("  FREQ <Hz>     25000 to 40000, steps of 500"));
+  replyLine(F("  PERIOD <ms>   500 to 2000"));
+  replyLine(F("  PULSE <ms>    1 to 100, must be < PERIOD"));
+  replyLine(F("  START"));
+  replyLine(F("  STOP"));
+  replyLine(F("  TEST          bench notes only; does not mute D8 or D9"));
+  replyLine(F("D9 is a logic square wave for an external driver, not a transducer."));
 }
 
 static void printTestNotes() {
-  Serial.println(F("TEST_MODE bench check, no transducer and no power amplifier:"));
-  Serial.println(F("  Probe D9 for the carrier and D8 for the burst gate."));
-  Serial.println(F("  Probe ground is Arduino GND."));
-  Serial.println(F("  Fit pull-downs on D8 and D9 before a driver exists."));
-  Serial.print(F("  Requested "));
-  Serial.print(g_freq_hz);
+  replyLine(F("TEST does not start, stop, or mute the carrier."));
+  replyLine(F("START drives D9 and D8 whether TEST_MODE is 0 or 1."));
+  replyLine(F("TEST_MODE does not disable an external amplifier."));
+  replyLine(F("From reset until setup(), D8 and D9 are high-Z."));
+  replyLine(F("Fit a pull-down on D8 so a driver stays disabled in that window."));
+  servicePinger();
+  Serial.print(F("Requested "));
+  Serial.print(g_settings.freq_hz);
   Serial.print(F(" Hz, timer produces "));
-  printHz(g_freq_hz);
+  printHz(g_settings.freq_hz);
   Serial.println();
-  Serial.println(F("  A 50% logic square wave has odd harmonics. Acoustic output is TBD."));
+  servicePinger();
+  absorbSerial();
+  replyLine(F("A 50% logic square wave has odd harmonics. Acoustic output is TBD."));
 #if TEST_MODE
-  Serial.println(F("  TEST_MODE compile flag is 1."));
+  replyLine(F("TEST_MODE compile flag is 1 (warning only)."));
 #else
-  Serial.println(F("  TEST_MODE compile flag is 0. Set it to 1 in the sketch for a boot warning."));
+  replyLine(F("TEST_MODE compile flag is 0 (warning only when set to 1)."));
 #endif
 }
 
 static void printStatus() {
+  servicePinger();
   Serial.print(F("STATE "));
-  Serial.println(g_running ? F("running") : F("stopped"));
+  Serial.println(g_settings.running ? F("running") : F("stopped"));
+  servicePinger();
+  absorbSerial();
   Serial.print(F("BURST "));
   Serial.println(g_in_burst ? F("on") : F("off"));
+  servicePinger();
+  absorbSerial();
   Serial.print(F("FREQ requested "));
-  Serial.print(g_freq_hz);
+  Serial.print(g_settings.freq_hz);
   Serial.print(F(" Hz, actual "));
-  printHz(g_freq_hz);
+  printHz(g_settings.freq_hz);
   Serial.println();
+  servicePinger();
+  absorbSerial();
   if (g_in_burst) {
     Serial.print(F("FREQ generating "));
     Serial.print(g_burst_freq_hz);
     Serial.print(F(" Hz, actual "));
     printHz(g_burst_freq_hz);
     Serial.println();
+    servicePinger();
+    absorbSerial();
   }
   Serial.print(F("PERIOD "));
-  Serial.print(g_period_ms);
+  Serial.print(g_settings.period_ms);
   Serial.println(F(" ms"));
+  servicePinger();
+  absorbSerial();
   Serial.print(F("PULSE "));
-  Serial.print(g_pulse_ms);
+  Serial.print(g_settings.pulse_ms);
   Serial.println(F(" ms"));
-  Serial.println(F("PINS D9 carrier OC1A, D8 enable, idle level LOW"));
-  Serial.println(F("NOTE 5 V GPIO cannot drive a transducer. External driver is TBD."));
+  servicePinger();
+  absorbSerial();
+  replyLine(F("PINS D9 carrier OC1A, D8 enable, idle level LOW"));
+  replyLine(F("NOTE 5 V GPIO cannot drive a transducer. External driver is TBD."));
+  replyLine(F("NOTE STOP latency is the time until this command is parsed, then pins go LOW before OK is printed."));
 }
 
-static bool parseU16(const char *text, uint16_t &value) {
-  if (text == nullptr || text[0] == '\0') {
-    return false;
+static void reportNumberError(PingerNumberStatus status, const __FlashStringHelper *example) {
+  if (status == PINGER_NUM_SIGN) {
+    replyLine(F("ERR sign is not allowed"));
+    return;
   }
-  char *end = nullptr;
-  unsigned long parsed = strtoul(text, &end, 10);
-  while (end != nullptr && *end == ' ') {
-    end++;
+  if (status == PINGER_NUM_OVERFLOW) {
+    replyLine(F("ERR number does not fit in 0..65535"));
+    return;
   }
-  if (end == text || end == nullptr || *end != '\0' || parsed > 65535UL) {
-    return false;
+  if (status == PINGER_NUM_EMPTY || status == PINGER_NUM_MALFORMED) {
+    replyLine(example);
   }
-  value = (uint16_t)parsed;
-  return true;
 }
 
-static void applyTimingCache() {
-  g_period_us = (uint32_t)g_period_ms * 1000UL;
-  g_pulse_us = (uint32_t)g_pulse_ms * 1000UL;
+static void executeStop() {
+  pingerStop(&g_settings);
+  outputIdle();
+  // Pins are already LOW. The following print does not gate the pin update.
+  Serial.println(F("OK STOP pins LOW"));
+  servicePinger();
+}
+
+static bool pendingIsStop(const char *line) {
+  char copy[LINE_MAX];
+  strncpy(copy, line, LINE_MAX - 1);
+  copy[LINE_MAX - 1] = '\0';
+  PingerLine parsed = pingerParseLine(copy);
+  return parsed.command == PINGER_CMD_STOP && !parsed.extra;
 }
 
 static void handleLine(char *line) {
-  while (*line == ' ') {
-    line++;
+  servicePinger();
+  PingerLine parsed = pingerParseLine(line);
+  if (parsed.command == PINGER_CMD_EMPTY) {
+    return;
   }
-  if (*line == '\0') {
+  if (parsed.command == PINGER_CMD_UNKNOWN) {
+    replyLine(F("ERR unknown command; send HELP"));
+    return;
+  }
+  if (parsed.extra) {
+    replyLine(F("ERR unexpected argument"));
     return;
   }
 
-  char *arg = line;
-  while (*arg != '\0' && *arg != ' ') {
-    if (*arg >= 'a' && *arg <= 'z') {
-      *arg = (char)(*arg - ('a' - 'A'));
-    }
-    arg++;
-  }
-  if (*arg != '\0') {
-    *arg = '\0';
-    arg++;
-    while (*arg == ' ') {
-      arg++;
-    }
-  }
-
-  if (strcmp(line, "HELP") == 0) {
-    if (*arg != '\0') {
-      Serial.println(F("ERR HELP takes no argument"));
-      return;
-    }
+  if (parsed.command == PINGER_CMD_HELP) {
     printHelp();
     return;
   }
-  if (strcmp(line, "STATUS") == 0) {
-    if (*arg != '\0') {
-      Serial.println(F("ERR STATUS takes no argument"));
-      return;
-    }
+  if (parsed.command == PINGER_CMD_STATUS) {
     printStatus();
     return;
   }
-  if (strcmp(line, "TEST") == 0) {
-    if (*arg != '\0') {
-      Serial.println(F("ERR TEST takes no argument"));
-      return;
-    }
+  if (parsed.command == PINGER_CMD_TEST) {
     printTestNotes();
     return;
   }
-  if (strcmp(line, "START") == 0) {
-    if (*arg != '\0') {
-      Serial.println(F("ERR START takes no argument"));
+  if (parsed.command == PINGER_CMD_START) {
+    if (pingerStart(&g_settings) == PINGER_APPLY_ALREADY_RUNNING) {
+      replyLine(F("ERR already running; send STOP first"));
       return;
     }
-    if (g_running) {
-      Serial.println(F("ERR already running; send STOP first"));
-      return;
-    }
-    g_running = true;
     burstBegin();
     g_cycle_start_us = g_burst_start_us;
+    servicePinger();
     Serial.print(F("OK START actual "));
     printHz(g_burst_freq_hz);
     Serial.println();
+    servicePinger();
+    absorbSerial();
     return;
   }
-  if (strcmp(line, "STOP") == 0) {
-    if (*arg != '\0') {
-      Serial.println(F("ERR STOP takes no argument"));
-      return;
-    }
-    g_running = false;
-    outputIdle();
-    Serial.println(F("OK STOP pins LOW"));
+  if (parsed.command == PINGER_CMD_STOP) {
+    executeStop();
     return;
   }
-  if (strcmp(line, "FREQ") == 0) {
-    uint16_t freq = 0;
-    if (!parseU16(arg, freq)) {
-      Serial.println(F("ERR FREQ <Hz>, example FREQ 30000"));
+
+  if (parsed.number != PINGER_NUM_OK) {
+    if (parsed.command == PINGER_CMD_FREQ) {
+      reportNumberError(parsed.number, F("ERR FREQ <Hz>, example FREQ 30000"));
+    } else if (parsed.command == PINGER_CMD_PERIOD) {
+      reportNumberError(parsed.number, F("ERR PERIOD <ms>, example PERIOD 1000"));
+    } else {
+      reportNumberError(parsed.number, F("ERR PULSE <ms>, example PULSE 10"));
+    }
+    return;
+  }
+
+  if (parsed.command == PINGER_CMD_FREQ) {
+    if (pingerSetFreq(&g_settings, parsed.value) != PINGER_APPLY_OK) {
+      replyLine(F("ERR frequency must be 25000 to 40000 Hz in 500 Hz steps"));
       return;
     }
-    if (freq < FREQ_MIN_HZ || freq > FREQ_MAX_HZ || (freq % FREQ_STEP_HZ) != 0) {
-      Serial.println(F("ERR frequency must be 25000 to 40000 Hz in 500 Hz steps"));
-      return;
-    }
-    g_freq_hz = freq;
+    servicePinger();
     Serial.print(F("OK FREQ actual "));
-    printHz(g_freq_hz);
-    if (g_in_burst && g_burst_freq_hz != g_freq_hz) {
+    printHz(g_settings.freq_hz);
+    if (g_in_burst && g_burst_freq_hz != g_settings.freq_hz) {
       Serial.print(F("; applies on next burst"));
     }
     Serial.println();
+    servicePinger();
+    absorbSerial();
     return;
   }
-  if (strcmp(line, "PERIOD") == 0) {
-    uint16_t period = 0;
-    if (!parseU16(arg, period)) {
-      Serial.println(F("ERR PERIOD <ms>, example PERIOD 1000"));
+  if (parsed.command == PINGER_CMD_PERIOD) {
+    PingerApplyStatus status = pingerSetPeriod(&g_settings, parsed.value);
+    if (status == PINGER_APPLY_NOT_SHORTER) {
+      replyLine(F("ERR period must be greater than the current pulse width"));
       return;
     }
-    if (period < PERIOD_MIN_MS || period > PERIOD_MAX_MS) {
-      Serial.println(F("ERR period must be 500 to 2000 ms"));
+    if (status != PINGER_APPLY_OK) {
+      replyLine(F("ERR period must be 500 to 2000 ms"));
       return;
     }
-    if (g_pulse_ms >= period) {
-      Serial.println(F("ERR period must be greater than the current pulse width"));
-      return;
-    }
-    g_period_ms = period;
-    applyTimingCache();
+    servicePinger();
     Serial.print(F("OK PERIOD "));
-    Serial.print(g_period_ms);
+    Serial.print(g_settings.period_ms);
     Serial.println(F(" ms"));
+    servicePinger();
+    absorbSerial();
     return;
   }
-  if (strcmp(line, "PULSE") == 0) {
-    uint16_t pulse = 0;
-    if (!parseU16(arg, pulse)) {
-      Serial.println(F("ERR PULSE <ms>, example PULSE 10"));
+  if (parsed.command == PINGER_CMD_PULSE) {
+    PingerApplyStatus status = pingerSetPulse(&g_settings, parsed.value);
+    if (status == PINGER_APPLY_NOT_SHORTER) {
+      replyLine(F("ERR pulse must be shorter than the repetition period"));
       return;
     }
-    if (pulse < PULSE_MIN_MS || pulse > PULSE_MAX_MS) {
-      Serial.println(F("ERR pulse must be 1 to 100 ms"));
+    if (status != PINGER_APPLY_OK) {
+      replyLine(F("ERR pulse must be 1 to 100 ms"));
       return;
     }
-    if (pulse >= g_period_ms) {
-      Serial.println(F("ERR pulse must be shorter than the repetition period"));
-      return;
-    }
-    g_pulse_ms = pulse;
-    applyTimingCache();
+    servicePinger();
     Serial.print(F("OK PULSE "));
-    Serial.print(g_pulse_ms);
+    Serial.print(g_settings.pulse_ms);
     Serial.println(F(" ms"));
-    return;
+    servicePinger();
+    absorbSerial();
   }
-
-  Serial.println(F("ERR unknown command; send HELP"));
 }
 
-static void serviceSerial() {
-  while (Serial.available() > 0) {
+static bool enqueueRx(bool overflow) {
+  char *dest = nullptr;
+  bool *ready = nullptr;
+  bool *overflow_flag = nullptr;
+  if (!g_pending_ready) {
+    dest = g_pending;
+    ready = &g_pending_ready;
+    overflow_flag = &g_pending_overflow;
+  } else if (!g_stashed_ready) {
+    dest = g_stashed;
+    ready = &g_stashed_ready;
+    overflow_flag = &g_stashed_overflow;
+  } else {
+    return false;
+  }
+  *overflow_flag = overflow;
+  if (!overflow) {
+    memcpy(dest, g_rx, g_rx_len);
+    dest[g_rx_len] = '\0';
+  }
+  *ready = true;
+  return true;
+}
+
+static void promoteStash() {
+  if (g_pending_ready || !g_stashed_ready) {
+    return;
+  }
+  memcpy(g_pending, g_stashed, LINE_MAX);
+  g_pending_overflow = g_stashed_overflow;
+  g_pending_ready = true;
+  g_stashed_ready = false;
+}
+
+static void absorbSerial() {
+  // Keep reading while a reply is printing. STOP is applied immediately.
+  // One other command can sit in g_pending and one in g_stashed; further
+  // bytes stay in the UART until a slot frees.
+  while (Serial.available() > 0 && !(g_pending_ready && g_stashed_ready)) {
     int raw = Serial.read();
     if (raw < 0) {
       return;
     }
     char ch = (char)raw;
     if (ch == '\r' || ch == '\n') {
-      if (g_line_overflow) {
-        Serial.println(F("ERR line too long"));
-      } else if (g_line_len > 0) {
-        g_line[g_line_len] = '\0';
-        handleLine(g_line);
+      servicePinger();
+      if (g_rx_overflow) {
+        enqueueRx(true);
+      } else if (g_rx_len > 0) {
+        g_rx[g_rx_len] = '\0';
+        if (g_in_handler && pendingIsStop(g_rx)) {
+          executeStop();
+        } else {
+          enqueueRx(false);
+        }
       }
-      g_line_len = 0;
-      g_line_overflow = false;
+      g_rx_len = 0;
+      g_rx_overflow = false;
       continue;
     }
-    if (g_line_overflow) {
+    if (g_rx_overflow) {
       continue;
     }
-    if (g_line_len + 1 >= LINE_MAX) {
-      g_line_overflow = true;
-      g_line_len = 0;
+    if (g_rx_len + 1 >= LINE_MAX) {
+      g_rx_overflow = true;
+      g_rx_len = 0;
       continue;
     }
-    g_line[g_line_len++] = ch;
+    g_rx[g_rx_len++] = ch;
   }
 }
 
 void setup() {
+  pingerSettingsDefault(&g_settings);
   // Direction and idle level before Serial.begin, which can block on some hosts.
+  // This does not cover the reset/bootloader window. D8 needs a hardware pull-down.
   pinMode(PIN_ENABLE, OUTPUT);
   pinMode(PIN_CARRIER, OUTPUT);
   TIMSK1 = 0;
@@ -414,21 +449,34 @@ void setup() {
 
   Serial.begin(SERIAL_BAUD);
 #if TEST_MODE
-  Serial.println(F("TEST_MODE: scope on D9/D8 only. Do not connect a transducer or amplifier."));
+  Serial.println(F("TEST_MODE 1 is a warning only. START still drives D8 and D9. It does not disable an amplifier."));
 #endif
   Serial.println(F("RoboSub pinger idle. Pins LOW until START. Send HELP."));
   Serial.print(F("Defaults: "));
-  Serial.print(g_freq_hz);
+  Serial.print(g_settings.freq_hz);
   Serial.print(F(" Hz requested, actual "));
-  printHz(g_freq_hz);
+  printHz(g_settings.freq_hz);
   Serial.print(F(", period "));
-  Serial.print(g_period_ms);
+  Serial.print(g_settings.period_ms);
   Serial.print(F(" ms, pulse "));
-  Serial.print(g_pulse_ms);
+  Serial.print(g_settings.pulse_ms);
   Serial.println(F(" ms"));
 }
 
 void loop() {
   servicePinger();
-  serviceSerial();
+  promoteStash();
+  absorbSerial();
+  if (!g_pending_ready) {
+    return;
+  }
+  g_pending_ready = false;
+  if (g_pending_overflow) {
+    g_pending_overflow = false;
+    replyLine(F("ERR line too long"));
+    return;
+  }
+  g_in_handler = true;
+  handleLine(g_pending);
+  g_in_handler = false;
 }
