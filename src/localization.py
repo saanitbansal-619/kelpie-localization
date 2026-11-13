@@ -14,6 +14,12 @@ can still return a point for those arrays, but the point is not a unique
 * collinear: TDOAs are unchanged by any rotation about the array axis
 * coplanar: TDOAs are unchanged if the source is reflected through the plane
 
+A volumetric array can still have two different positions with the same
+range differences. Those positions are sometimes almost the same bearing
+from the array centroid and several metres apart in range. Bearing angle
+alone does not reveal that pair. Both are reported as an ambiguous fit,
+and neither coordinate is returned.
+
 Those cases return a non-finite position and ``success=False``. They are
 not filled in with a half-space assumption or a convenient initial guess.
 
@@ -47,6 +53,19 @@ _MAX_RANGE_M = 200.0
 # Two low-residual solutions separated by more than this angle are an
 # ambiguous fit, not a unique position.
 _AMBIGUITY_ANGLE_DEG = 20.0
+
+# Positions closer than this are one basin. The Levenberg-Marquardt
+# copies of a single root land within about 1e-11 m. A second exact
+# hyperboloid intersection for the catalog 3+1 array is 1.27 m away
+# and only 0.22 degrees off the same bearing, so the angle gate above
+# does not see it.
+_SAME_BASIN_M = 1e-3
+
+# 80 evaluations left some tetrahedron starts a few decimetres from the
+# true root with a residual still inside the similarity band. Those
+# starts finish at the same root when allowed to continue. The second
+# exact 3+1 root does not.
+_MAX_NFEV = 200
 
 
 @dataclass(frozen=True)
@@ -207,6 +226,67 @@ def _far_field_direction(
     return direction / norm
 
 
+def _hyperboloid_seeds(
+    hydrophones_m: np.ndarray,
+    tdoas_s: np.ndarray,
+    sound_speed_mps: float,
+    reference_channel: int,
+) -> list[np.ndarray]:
+    """Candidate positions from the squared range-difference equations.
+
+    With the reference range as an extra unknown, the TDOA equations are
+    linear in source position. Substituting the reference range produces
+    a quadratic. Each positive root is only a seed: least squares has to
+    drive the unsquared residual down, and a second seed that does so is
+    a second basin rather than a guess the multi-start happened to miss.
+    """
+    delta_m = np.asarray(tdoas_s, dtype=float) * float(sound_speed_mps)
+    reference = hydrophones_m[reference_channel]
+    rows = []
+    offset = []
+    slope = []
+    for index in range(hydrophones_m.shape[0]):
+        if index == reference_channel:
+            continue
+        hydrophone = hydrophones_m[index]
+        difference = float(delta_m[index])
+        rows.append(2.0 * (reference - hydrophone))
+        offset.append(
+            float(np.dot(reference, reference) - np.dot(hydrophone, hydrophone) + difference * difference)
+        )
+        slope.append(2.0 * difference)
+    design = np.vstack(rows)
+    offset_vector = np.asarray(offset, dtype=float)
+    slope_vector = np.asarray(slope, dtype=float)
+    particular, *_ = np.linalg.lstsq(design, offset_vector, rcond=None)
+    homogeneous, *_ = np.linalg.lstsq(design, slope_vector, rcond=None)
+    shifted = particular - reference
+    quadratic_a = float(np.dot(homogeneous, homogeneous) - 1.0)
+    quadratic_b = float(2.0 * np.dot(shifted, homogeneous))
+    quadratic_c = float(np.dot(shifted, shifted))
+    if abs(quadratic_a) < 1e-12:
+        if abs(quadratic_b) < 1e-12:
+            return []
+        ranges = [-quadratic_c / quadratic_b]
+    else:
+        discriminant = quadratic_b * quadratic_b - 4.0 * quadratic_a * quadratic_c
+        if discriminant < 0.0:
+            return []
+        root = float(np.sqrt(discriminant))
+        ranges = [
+            (-quadratic_b + root) / (2.0 * quadratic_a),
+            (-quadratic_b - root) / (2.0 * quadratic_a),
+        ]
+    seeds = []
+    for reference_range in ranges:
+        if not np.isfinite(reference_range) or reference_range <= 1e-6:
+            continue
+        position = particular + float(reference_range) * homogeneous
+        if np.all(np.isfinite(position)):
+            seeds.append(np.asarray(position, dtype=float))
+    return seeds
+
+
 def _initial_guesses(
     hydrophones_m: np.ndarray,
     tdoas_s: np.ndarray,
@@ -222,6 +302,17 @@ def _initial_guesses(
         guesses.append(center + 4.0 * axis)
         guesses.append(center - 4.0 * axis)
     return guesses
+
+
+def _distinct_basins(fits: list[tuple[np.ndarray, float]]) -> list[tuple[np.ndarray, float]]:
+    """Keep the lowest-residual position from each separated cluster."""
+    ordered = sorted(fits, key=lambda item: item[1])
+    basins: list[tuple[np.ndarray, float]] = []
+    for position, residual in ordered:
+        if any(float(np.linalg.norm(position - kept)) <= _SAME_BASIN_M for kept, _residual in basins):
+            continue
+        basins.append((position, residual))
+    return basins
 
 
 def localize_from_tdoa(
@@ -292,8 +383,10 @@ def localize_from_tdoa(
         )
 
     center = array_center_m(hydrophones_m)
+    guesses = _initial_guesses(hydrophones_m, measured, sound_speed_mps, reference_channel)
+    guesses.extend(_hyperboloid_seeds(hydrophones_m, measured, sound_speed_mps, reference_channel))
     fits: list[tuple[np.ndarray, float]] = []
-    for guess in _initial_guesses(hydrophones_m, measured, sound_speed_mps, reference_channel):
+    for guess in guesses:
         solution = least_squares(
             residual,
             np.asarray(guess, dtype=float),
@@ -301,7 +394,7 @@ def localize_from_tdoa(
             ftol=1e-12,
             xtol=1e-12,
             gtol=1e-12,
-            max_nfev=80,
+            max_nfev=_MAX_NFEV,
         )
         position = np.asarray(solution.x, dtype=float)
         if not np.all(np.isfinite(position)):
@@ -318,21 +411,23 @@ def localize_from_tdoa(
     if not fits:
         return _failure(geometry_class, "no_bounded_solution")
 
-    fits.sort(key=lambda item: item[1])
-    best_position, best_residual = fits[0]
+    basins = _distinct_basins(fits)
+    best_position, best_residual = basins[0]
     # 500 µs RMS is several times the ~169 µs physical maximum TDOA of a
     # 0.25 m array, so the measurements are not a usable localization.
     if best_residual > 5e-4:
         return _failure(geometry_class, "residual_above_physical_scale")
 
     tolerance_s = best_residual + max(5e-6, 0.25 * best_residual)
-    similar = [item for item in fits if item[1] <= tolerance_s]
-    for position, _residual in similar[1:]:
+    for position, other_residual in basins[1:]:
+        if other_residual > tolerance_s:
+            continue
         try:
             separation = angular_error_between_points_deg(center, best_position, position)
         except ValueError:
             return _failure(geometry_class, "undefined_direction")
-        if separation > _AMBIGUITY_ANGLE_DEG:
+        gap_m = float(np.linalg.norm(position - best_position))
+        if separation > _AMBIGUITY_ANGLE_DEG or gap_m > _SAME_BASIN_M:
             return _failure(geometry_class, "ambiguous_local_minima")
 
     if not np.all(np.isfinite(best_position)):

@@ -74,11 +74,10 @@ def test_shared_source_uses_one_seed_and_degenerate_arrays_fail() -> None:
     assert np.isfinite(linear["est_tdoa_h1_us"])
 
 
-def test_volumetric_trial_returns_a_finite_direction() -> None:
+def test_representative_tetrahedral_source_is_ambiguous() -> None:
     row = _settings_trial("tetrahedral", 40.0)
-    assert row["solver_success"] is True
-    assert row["failure_reason"] == ""
-    assert np.isfinite(row["angular_error_deg"])
-    assert np.isfinite(row["position_error_m"])
-    assert row["position_error_m"] > 0.0
-    assert 0.0 <= row["angular_error_deg"] <= 180.0
+    assert row["solver_success"] is False
+    assert row["failure_reason"] == "ambiguous_local_minima"
+    assert not np.isfinite(row["position_error_m"])
+    assert not np.isfinite(row["angular_error_deg"])
+    assert not np.isfinite(row["est_x_m"])

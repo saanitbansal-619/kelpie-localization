@@ -156,14 +156,14 @@ def test_noise_free_waveform_tdoa_approaches_geometry() -> None:
         settings=CONFIG,
         noise_seed_value=99,
     )
-    assert row["success"] is True
-    assert row["failure_reason"] == ""
+    assert row["success"] is False
+    assert row["failure_reason"] == "ambiguous_local_minima"
+    assert other["failure_reason"] == "ambiguous_local_minima"
     for key in ("tdoa_err_h1_us", "tdoa_err_h2_us", "tdoa_err_h3_us"):
         assert abs(float(row[key])) < 1.0
         assert row[key] == other[key]
-    assert row["localization_error_m"] < 0.5
-    assert row["localization_error_m"] == other["localization_error_m"]
-    assert np.isfinite(row["angular_error_deg"])
+    assert np.isnan(row["localization_error_m"])
+    assert np.isnan(other["localization_error_m"])
 
 
 def test_same_seed_reproduces_a_noisy_waveform_trial() -> None:

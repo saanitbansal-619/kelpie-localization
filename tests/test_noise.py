@@ -189,30 +189,32 @@ def test_noise_free_localization_matches_direct_zero_noise_trial() -> None:
         noise_free=True,
         source=source,
     )
-    assert direct["solver_success"] is True
-    assert wrapped["success"] is True
+    assert direct["solver_success"] is False
+    assert direct["failure_reason"] == "ambiguous_local_minima"
+    assert wrapped["success"] is False
+    assert wrapped["failure_reason"] == "ambiguous_local_minima"
+    assert other_seed["failure_reason"] == "ambiguous_local_minima"
     assert wrapped["noise_free"] is True
     assert math_isnan(wrapped["snr_db"])
     assert wrapped["hydrophone_configuration"] == "tetrahedral"
     assert wrapped["n_hydrophones"] == 4
-    for key in ("est_x_m", "est_y_m", "est_z_m"):
-        assert wrapped[key] == direct[key]
-        assert other_seed[key] == direct[key]
-    assert wrapped["localization_error_m"] == direct["position_error_m"]
-    assert wrapped["angular_error_deg"] == direct["angular_error_deg"]
+    for key in ("est_x_m", "est_y_m", "est_z_m", "localization_error_m", "angular_error_deg"):
+        assert math_isnan(wrapped[key])
+        assert math_isnan(other_seed[key])
+    for key in ("est_x_m", "est_y_m", "est_z_m", "position_error_m", "angular_error_deg"):
+        assert math_isnan(direct[key])
 
 
 def test_same_seed_reproduces_localization() -> None:
     source = np.array([2.0, 1.0, 1.5])
     first = _execute(geometry="tetrahedral", seed=50, snr_db=20.0, noise_free=False, source=source)
     second = _execute(geometry="tetrahedral", seed=50, snr_db=20.0, noise_free=False, source=source)
-    assert first["success"] is True
-    assert first["est_x_m"] == second["est_x_m"]
-    assert first["est_y_m"] == second["est_y_m"]
-    assert first["est_z_m"] == second["est_z_m"]
-    assert first["localization_error_m"] == second["localization_error_m"]
-    assert first["angular_error_deg"] == second["angular_error_deg"]
+    assert first["success"] is False
+    assert second["success"] is False
+    assert first["failure_reason"] == "ambiguous_local_minima"
+    assert second["failure_reason"] == "ambiguous_local_minima"
     assert first["noise_seed"] == 50
+    assert second["noise_seed"] == 50
 
 
 def test_degenerate_array_is_recorded_as_a_failure() -> None:

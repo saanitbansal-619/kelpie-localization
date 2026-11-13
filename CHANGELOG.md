@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-11-03 — ambiguous TDOA solutions are rejected
+
+### Fixed
+
+* `localize_from_tdoa` was returning one of two exact positions when those positions lay on nearly the same bearing. A second hyperboloid intersection is now a separate basin, and the result is `ambiguous_local_minima` with no coordinate
+
+### Preserved
+
+* Hydrophone coordinates, sound speed, and saved experiment tables. Those tables were not rerun
+
 ## 2026-11-01 — acquisition records into the existing localizer
 
 ### Added
